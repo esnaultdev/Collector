@@ -1,10 +1,16 @@
-package net.aohayou.collector;
+package net.aohayou.collector.collections;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import static com.google.common.base.Preconditions.*;
+
+import net.aohayou.collector.model.Collection;
+import net.aohayou.collector.R;
 
 import java.util.List;
 
@@ -13,10 +19,19 @@ import java.util.List;
  */
 public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.ViewHolder> {
 
-    private final List<Collection> values;
+    private List<Collection> values;
 
-    public CollectionAdapter(List<Collection> items) {
-        values = items;
+    public CollectionAdapter(@NonNull List<Collection> items) {
+        setValues(items);
+    }
+
+    public void replaceData(@NonNull List<Collection> items) {
+        setValues(items);
+        notifyDataSetChanged();
+    }
+
+    private void setValues(@NonNull List<Collection> items) {
+        values = checkNotNull(items);
     }
 
     @Override
@@ -31,7 +46,7 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
         holder.item = values.get(position);
         holder.nameView.setText(values.get(position).getName());
 
-        //TODO set an onClickListener using a listener passed in the constructor
+        //TODO setup listeners
     }
 
     @Override

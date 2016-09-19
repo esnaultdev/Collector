@@ -1,4 +1,4 @@
-package net.aohayou.collector;
+package net.aohayou.collector.model;
 
 public class Collection {
     private final String name;
