@@ -9,5 +9,5 @@
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
     app:layoutManager="LinearLayoutManager"
-    tools:context=".collections.CollectionFragment"
+    tools:context=".collections.CollectionsFragment"
     tools:listitem="@layout/fragment_collection_item" />

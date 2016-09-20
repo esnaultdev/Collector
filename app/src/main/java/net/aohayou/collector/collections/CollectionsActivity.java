@@ -18,7 +18,7 @@ import net.aohayou.collector.util.ActivityUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
+public class CollectionsActivity extends AppCompatActivity {
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.fab) FloatingActionButton fab;
@@ -35,10 +35,10 @@ public class MainActivity extends AppCompatActivity {
 
         // Setup the fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
-        CollectionFragment collectionsFragment =
-                (CollectionFragment) fragmentManager.findFragmentById(R.id.contentFrame);
+        CollectionsFragment collectionsFragment =
+                (CollectionsFragment) fragmentManager.findFragmentById(R.id.contentFrame);
         if (collectionsFragment == null) {
-            collectionsFragment = CollectionFragment.newInstance();
+            collectionsFragment = CollectionsFragment.newInstance();
             ActivityUtils.addFragmentToActivity(
                     fragmentManager, collectionsFragment, R.id.contentFrame);
         }

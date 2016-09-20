@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * A fragment representing a list of Collection items.
  */
-public class CollectionFragment extends Fragment implements CollectionsContract.View {
+public class CollectionsFragment extends Fragment implements CollectionsContract.View {
 
     private CollectionsContract.Presenter presenter;
     private CollectionAdapter adapter;
@@ -28,11 +28,11 @@ public class CollectionFragment extends Fragment implements CollectionsContract.
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public CollectionFragment() {
+    public CollectionsFragment() {
     }
 
-    public static CollectionFragment newInstance() {
-        return new CollectionFragment();
+    public static CollectionsFragment newInstance() {
+        return new CollectionsFragment();
     }
 
     @Override
