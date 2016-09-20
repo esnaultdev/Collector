@@ -2,7 +2,10 @@ package net.aohayou.collector.collections;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -22,10 +25,18 @@ import butterknife.ButterKnife;
  */
 public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.ViewHolder> {
 
-    private List<Collection> values;
+    public interface CollectionInteractionListener {
+        void onRename(@NonNull Collection collection);
+        void onDelete(@NonNull Collection collection);
+    }
 
-    public CollectionAdapter(@NonNull List<Collection> items) {
+    private List<Collection> values;
+    private CollectionInteractionListener listener;
+
+    public CollectionAdapter(@NonNull List<Collection> items,
+                             @NonNull CollectionInteractionListener listener) {
         setValues(items);
+        this.listener = listener;
     }
 
     public void replaceData(@NonNull List<Collection> items) {
@@ -48,8 +59,6 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.item = values.get(position);
         holder.nameView.setText(values.get(position).getName());
-
-        //TODO setup listeners
     }
 
     @Override
@@ -66,6 +75,32 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
             super(view);
             this.view = view;
             ButterKnife.bind(this, view);
+            view.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+                @Override
+                public void onCreateContextMenu(ContextMenu menu, View v,
+                                                ContextMenu.ContextMenuInfo menuInfo) {
+                    MenuInflater menuInflater = new MenuInflater(v.getContext());
+                    menuInflater.inflate(R.menu.context_menu_collection, menu);
+                    for (int i = 0; i < menu.size(); i++) {
+                        MenuItem item = menu.getItem(i);
+                        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                            @Override
+                            public boolean onMenuItemClick(MenuItem item) {
+                                switch (item.getItemId()) {
+                                    case R.id.action_rename:
+                                        listener.onRename(ViewHolder.this.item);
+                                        return true;
+                                    case R.id.action_delete:
+                                        listener.onDelete(ViewHolder.this.item);
+                                        return true;
+                                    default:
+                                        return false;
+                                }
+                            }
+                        });
+                    }
+                }
+            });
         }
 
         @Override

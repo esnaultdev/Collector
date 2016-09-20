@@ -1,6 +1,8 @@
 package net.aohayou.collector.model;
 
-public class Collection {
+import android.support.annotation.NonNull;
+
+public class Collection implements Comparable<Collection> {
     private final String name;
 
     public Collection(String name) {
@@ -9,5 +11,10 @@ public class Collection {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public int compareTo(@NonNull Collection another) {
+        return name.compareTo(another.getName());
     }
 }

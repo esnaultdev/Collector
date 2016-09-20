@@ -39,7 +39,18 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        adapter = new CollectionAdapter(new ArrayList<Collection>());
+        adapter = new CollectionAdapter(new ArrayList<Collection>(),
+                new CollectionAdapter.CollectionInteractionListener() {
+            @Override
+            public void onRename(@NonNull Collection collection) {
+                presenter.onRename(collection);
+            }
+
+            @Override
+            public void onDelete(@NonNull Collection collection) {
+                //TODO
+            }
+        });
     }
 
     @Override
@@ -76,5 +87,23 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
     @Override
     public void showCollections(@NonNull List<Collection> collections) {
         adapter.replaceData(collections);
+    }
+
+    @Override
+    public void showRenameDialog(@NonNull final Collection collection) {
+        RenameCollectionDialogFragment renameDialog;
+        renameDialog = RenameCollectionDialogFragment.createInstance(collection.getName());
+        renameDialog.setDialogListener(new RenameCollectionDialogFragment.Listener() {
+            @Override
+            public void onCollectionRenamed(@NonNull String newName, @NonNull String oldName) {
+                presenter.renameCollection(collection, newName);
+            }
+
+            @Override
+            public void onCancel() {
+                // Do nothing
+            }
+        });
+        renameDialog.show(getActivity().getSupportFragmentManager(), "rename");
     }
 }

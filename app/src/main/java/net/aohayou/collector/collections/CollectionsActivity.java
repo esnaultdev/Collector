@@ -50,9 +50,9 @@ public class CollectionsActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CollectionCreationDialogFragment creationDialog;
-                creationDialog = new CollectionCreationDialogFragment();
-                creationDialog.setDialogListener(new CollectionCreationDialogFragment.Listener() {
+                CreateCollectionDialogFragment creationDialog;
+                creationDialog = new CreateCollectionDialogFragment();
+                creationDialog.setDialogListener(new CreateCollectionDialogFragment.Listener() {
                     @Override
                     public void onCollectionCreate(@NonNull String collectionName) {
                         if (!TextUtils.isEmpty(collectionName)) {

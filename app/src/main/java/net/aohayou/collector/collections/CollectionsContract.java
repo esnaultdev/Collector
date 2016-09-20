@@ -13,6 +13,8 @@ public interface CollectionsContract {
     interface View extends BaseView<Presenter> {
 
         void showCollections(@NonNull List<Collection> collections);
+
+        void showRenameDialog(@NonNull Collection collection);
     }
 
     interface Presenter extends BasePresenter {
@@ -22,5 +24,9 @@ public interface CollectionsContract {
         // void openCollectionDetails(@NonNull Collection collection);
 
         void addCollection(@NonNull Collection collection);
+
+        void onRename(@NonNull Collection collection);
+
+        void renameCollection(@NonNull Collection collection, String newName);
     }
 }
