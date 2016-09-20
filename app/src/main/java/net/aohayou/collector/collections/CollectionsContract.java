@@ -21,6 +21,6 @@ public interface CollectionsContract {
 
         // void openCollectionDetails(@NonNull Collection collection);
 
-        // void addCollection(@NonNull Collection collection);
+        void addCollection(@NonNull Collection collection);
     }
 }

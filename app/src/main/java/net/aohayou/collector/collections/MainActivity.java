@@ -1,19 +1,23 @@
 package net.aohayou.collector.collections;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import net.aohayou.collector.R;
+import net.aohayou.collector.model.Collection;
 import net.aohayou.collector.util.ActivityUtils;
 
 public class MainActivity extends AppCompatActivity {
+
+    private CollectionsContract.Presenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,27 +26,42 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         // Setup the fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
         CollectionFragment collectionsFragment =
                 (CollectionFragment) fragmentManager.findFragmentById(R.id.contentFrame);
         if (collectionsFragment == null) {
-            collectionsFragment = collectionsFragment.newInstance();
+            collectionsFragment = CollectionFragment.newInstance();
             ActivityUtils.addFragmentToActivity(
                     fragmentManager, collectionsFragment, R.id.contentFrame);
         }
 
         // Setup the presenter
-        CollectionsPresenter presenter = new CollectionsPresenter(collectionsFragment);
+        presenter = new CollectionsPresenter(collectionsFragment);
+
+        //TODO should be in the view
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CollectionCreationDialogFragment creationDialog;
+                creationDialog = new CollectionCreationDialogFragment();
+                creationDialog.setDialogListener(new CollectionCreationDialogFragment.Listener() {
+                    @Override
+                    public void onCollectionCreate(@NonNull String collectionName) {
+                        if (!TextUtils.isEmpty(collectionName)) {
+                            presenter.addCollection(new Collection(collectionName));
+                        }
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        // Do nothing
+                    }
+                });
+                creationDialog.show(getSupportFragmentManager(), "creation");
+            }
+        });
     }
 
     @Override

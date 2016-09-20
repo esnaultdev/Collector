@@ -10,6 +10,7 @@ import java.util.List;
 public class CollectionsPresenter implements CollectionsContract.Presenter {
 
     private final CollectionsContract.View view;
+    private final List<Collection> collections = new ArrayList<>();
 
     public CollectionsPresenter(@NonNull CollectionsContract.View view) {
         this.view = view;
@@ -23,10 +24,15 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
 
     @Override
     public void loadCollections() {
-        List<Collection> collections = new ArrayList<>();
         collections.add(new Collection("Collection A"));
         collections.add(new Collection("Collection B"));
         collections.add(new Collection("Collection C"));
+        view.showCollections(collections);
+    }
+
+    @Override
+    public void addCollection(@NonNull Collection collection) {
+        collections.add(collection);
         view.showCollections(collections);
     }
 }

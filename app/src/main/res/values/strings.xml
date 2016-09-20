@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Collector</string>
     <string name="action_settings">Settings</string>
+
+    <string name="collection_creation_title">Create a new collection</string>
+    <string name="collection_name_hint">Collection name</string>
+    <string name="cancel">Cancel</string>
+    <string name="create">Create</string>
 </resources>
