@@ -43,12 +43,12 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
                 new CollectionAdapter.CollectionInteractionListener() {
             @Override
             public void onRename(@NonNull Collection collection) {
-                presenter.onRename(collection);
+                presenter.onRenameRequest(collection);
             }
 
             @Override
             public void onDelete(@NonNull Collection collection) {
-                presenter.deleteCollection(collection);
+                presenter.onDeleteRequest(collection);
             }
         });
     }
@@ -105,5 +105,23 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
             }
         });
         renameDialog.show(getActivity().getSupportFragmentManager(), "rename");
+    }
+
+    @Override
+    public void showDeleteDialog(@NonNull final Collection collection) {
+        DeleteCollectionDialogFragment deleteFragment;
+        deleteFragment = new DeleteCollectionDialogFragment();
+        deleteFragment.setListener(new DeleteCollectionDialogFragment.Listener() {
+            @Override
+            public void onConfirm() {
+                presenter.deleteCollection(collection);
+            }
+
+            @Override
+            public void onCancel() {
+                // Do nothing
+            }
+        });
+        deleteFragment.show(getActivity().getSupportFragmentManager(), "delete");
     }
 }

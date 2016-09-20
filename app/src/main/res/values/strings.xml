@@ -4,6 +4,7 @@
 
     <string name="collection_creation_title">Create a new collection</string>
     <string name="collection_rename_title">Rename the collection</string>
+    <string name="collection_delete_text">Delete the collection?</string>
     <string name="collection_name_hint">Collection name</string>
 
     <string name="cancel">Cancel</string>

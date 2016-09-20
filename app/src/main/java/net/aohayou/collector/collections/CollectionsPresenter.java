@@ -43,7 +43,7 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
     }
 
     @Override
-    public void onRename(@NonNull Collection collection) {
+    public void onRenameRequest(@NonNull Collection collection) {
         view.showRenameDialog(collection);
     }
 
@@ -53,6 +53,11 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
         collections.add(new Collection(newName));
         Collections.sort(collections);
         view.showCollections(collections);
+    }
+
+    @Override
+    public void onDeleteRequest(@NonNull Collection collection) {
+        view.showDeleteDialog(collection);
     }
 
     @Override

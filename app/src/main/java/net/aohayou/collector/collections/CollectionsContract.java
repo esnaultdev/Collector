@@ -15,6 +15,8 @@ public interface CollectionsContract {
         void showCollections(@NonNull List<Collection> collections);
 
         void showRenameDialog(@NonNull Collection collection);
+
+        void showDeleteDialog(@NonNull Collection collection);
     }
 
     interface Presenter extends BasePresenter {
@@ -25,9 +27,11 @@ public interface CollectionsContract {
 
         void addCollection(@NonNull Collection collection);
 
-        void onRename(@NonNull Collection collection);
+        void onRenameRequest(@NonNull Collection collection);
 
         void renameCollection(@NonNull Collection collection, String newName);
+
+        void onDeleteRequest(@NonNull Collection collection);
 
         void deleteCollection(@NonNull Collection collection);
     }
