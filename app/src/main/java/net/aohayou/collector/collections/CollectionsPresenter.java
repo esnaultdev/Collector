@@ -54,4 +54,10 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
         Collections.sort(collections);
         view.showCollections(collections);
     }
+
+    @Override
+    public void deleteCollection(@NonNull Collection collection) {
+        collections.remove(collection); //TODO fix the equals method
+        view.showCollections(collections);
+    }
 }

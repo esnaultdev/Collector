@@ -28,5 +28,7 @@ public interface CollectionsContract {
         void onRename(@NonNull Collection collection);
 
         void renameCollection(@NonNull Collection collection, String newName);
+
+        void deleteCollection(@NonNull Collection collection);
     }
 }

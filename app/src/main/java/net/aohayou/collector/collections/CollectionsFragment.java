@@ -48,7 +48,7 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
 
             @Override
             public void onDelete(@NonNull Collection collection) {
-                //TODO
+                presenter.deleteCollection(collection);
             }
         });
     }
