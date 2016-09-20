@@ -14,6 +14,9 @@ import net.aohayou.collector.R;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * {@link RecyclerView.Adapter} that can display {@link Collection} items.
  */
@@ -56,13 +59,13 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View view;
-        public final TextView nameView;
+        @BindView(R.id.collection_name) TextView nameView;
         public Collection item;
 
         public ViewHolder(View view) {
             super(view);
             this.view = view;
-            nameView = (TextView) view.findViewById(R.id.id);
+            ButterKnife.bind(this, view);
         }
 
         @Override

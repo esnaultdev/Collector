@@ -10,6 +10,9 @@ import android.support.v7.app.AlertDialog;
 
 import net.aohayou.collector.R;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class CollectionCreationDialogFragment extends DialogFragment {
 
     public interface Listener {
@@ -19,7 +22,7 @@ public class CollectionCreationDialogFragment extends DialogFragment {
 
     private Listener listener;
 
-    private TextInputEditText editText;
+    @BindView(R.id.collection_name_input_text) TextInputEditText editText;
 
     public void setDialogListener(Listener listener) {
         this.listener = listener;
@@ -53,7 +56,7 @@ public class CollectionCreationDialogFragment extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-        editText = (TextInputEditText) getDialog().findViewById(R.id.collection_name_input_text);
+        ButterKnife.bind(this, getDialog());
     }
 
     @Override

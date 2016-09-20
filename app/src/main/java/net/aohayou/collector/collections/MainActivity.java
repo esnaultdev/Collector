@@ -15,7 +15,13 @@ import net.aohayou.collector.R;
 import net.aohayou.collector.model.Collection;
 import net.aohayou.collector.util.ActivityUtils;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MainActivity extends AppCompatActivity {
+
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.fab) FloatingActionButton fab;
 
     private CollectionsContract.Presenter presenter;
 
@@ -23,7 +29,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ButterKnife.bind(this);
+
         setSupportActionBar(toolbar);
 
         // Setup the fragment
@@ -40,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
         presenter = new CollectionsPresenter(collectionsFragment);
 
         //TODO should be in the view
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
