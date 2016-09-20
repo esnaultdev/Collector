@@ -12,6 +12,7 @@
         android:id="@+id/collection_name_input_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:maxLength="@integer/collection_name_max_length"
         android:hint="@string/collection_name_hint"/>
 
 </android.support.design.widget.TextInputLayout>

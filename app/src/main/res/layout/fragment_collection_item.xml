@@ -14,6 +14,8 @@
         android:layout_gravity="center_vertical"
         android:textAppearance="?attr/textAppearanceListItem"
         android:textSize="@dimen/material_component_lists_single_line_text_size"
-        tools:text="Collection name" />
+        android:maxLines="1"
+        android:ellipsize="end"
+        tools:text="Collection name that is very long to test the ellipsize attribute" />
 
 </LinearLayout>

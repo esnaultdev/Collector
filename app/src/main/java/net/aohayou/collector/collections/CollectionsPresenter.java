@@ -24,9 +24,13 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
 
     @Override
     public void loadCollections() {
-        collections.add(new Collection("Collection A"));
-        collections.add(new Collection("Collection B"));
-        collections.add(new Collection("Collection C"));
+        // tmp dataset
+        if (collections.size() == 0) {
+            collections.add(new Collection("Collection A"));
+            collections.add(new Collection("Collection B"));
+            collections.add(new Collection("Collection C"));
+        }
+
         view.showCollections(collections);
     }
 
