@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -20,6 +21,9 @@ import java.util.List;
  * A fragment representing a list of Collection items.
  */
 public class CollectionsFragment extends Fragment implements CollectionsContract.View {
+
+    private static final String TAG_RENAME_COLLECTION = "renameCollection";
+    private static final String TAG_DELETE_COLLECTION = "deleteCollection";
 
     private CollectionsContract.Presenter presenter;
     private CollectionAdapter adapter;
@@ -77,6 +81,26 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
     public void onResume() {
         super.onResume();
         presenter.start();
+
+        bindDialogs();
+    }
+
+    private void bindDialogs() {
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        RenameCollectionDialogFragment renameDialog;
+        renameDialog = (RenameCollectionDialogFragment) fragmentManager
+                .findFragmentByTag(TAG_RENAME_COLLECTION);
+        if (renameDialog != null) {
+            //FIXME bad collection parameter
+            renameDialog.setDialogListener(getRenameDialogListener(new Collection("")));
+        }
+        DeleteCollectionDialogFragment deleteDialog;
+        deleteDialog = (DeleteCollectionDialogFragment) fragmentManager
+                .findFragmentByTag(TAG_DELETE_COLLECTION);
+        if (deleteDialog != null) {
+            //FIXME bad collection parameter
+            deleteDialog.setListener(getDeleteDialogListener(new Collection("")));
+        }
     }
 
     @Override
@@ -90,10 +114,17 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
     }
 
     @Override
-    public void showRenameDialog(@NonNull final Collection collection) {
+    public void showRenameDialog(@NonNull Collection collection) {
         RenameCollectionDialogFragment renameDialog;
         renameDialog = RenameCollectionDialogFragment.createInstance(collection.getName());
-        renameDialog.setDialogListener(new RenameCollectionDialogFragment.Listener() {
+        renameDialog.setDialogListener(getRenameDialogListener(collection));
+        renameDialog.show(getActivity().getSupportFragmentManager(), TAG_RENAME_COLLECTION);
+    }
+
+    @NonNull
+    private RenameCollectionDialogFragment.Listener
+    getRenameDialogListener(@NonNull final Collection collection) {
+        return new RenameCollectionDialogFragment.Listener() {
             @Override
             public void onCollectionRenamed(@NonNull String newName, @NonNull String oldName) {
                 presenter.renameCollection(collection, newName);
@@ -103,15 +134,21 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
             public void onCancel() {
                 // Do nothing
             }
-        });
-        renameDialog.show(getActivity().getSupportFragmentManager(), "rename");
+        };
     }
 
     @Override
-    public void showDeleteDialog(@NonNull final Collection collection) {
+    public void showDeleteDialog(@NonNull Collection collection) {
         DeleteCollectionDialogFragment deleteFragment;
         deleteFragment = new DeleteCollectionDialogFragment();
-        deleteFragment.setListener(new DeleteCollectionDialogFragment.Listener() {
+        deleteFragment.setListener(getDeleteDialogListener(collection));
+        deleteFragment.show(getActivity().getSupportFragmentManager(), TAG_DELETE_COLLECTION);
+    }
+
+    @NonNull
+    private DeleteCollectionDialogFragment.Listener
+    getDeleteDialogListener(@NonNull final Collection collection) {
+        return new DeleteCollectionDialogFragment.Listener() {
             @Override
             public void onConfirm() {
                 presenter.deleteCollection(collection);
@@ -121,7 +158,6 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
             public void onCancel() {
                 // Do nothing
             }
-        });
-        deleteFragment.show(getActivity().getSupportFragmentManager(), "delete");
+        };
     }
 }

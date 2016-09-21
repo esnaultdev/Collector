@@ -20,6 +20,8 @@ import butterknife.ButterKnife;
 
 public class CollectionsActivity extends AppCompatActivity {
 
+    private static final String TAG_CREATE_COLLECTION = "createCollection";
+
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.fab) FloatingActionButton fab;
 
@@ -52,22 +54,37 @@ public class CollectionsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 CreateCollectionDialogFragment creationDialog;
                 creationDialog = new CreateCollectionDialogFragment();
-                creationDialog.setDialogListener(new CreateCollectionDialogFragment.Listener() {
-                    @Override
-                    public void onCollectionCreate(@NonNull String collectionName) {
-                        if (!TextUtils.isEmpty(collectionName)) {
-                            presenter.addCollection(new Collection(collectionName));
-                        }
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        // Do nothing
-                    }
-                });
-                creationDialog.show(getSupportFragmentManager(), "creation");
+                creationDialog.setDialogListener(getCreationDialogListener());
+                creationDialog.show(getSupportFragmentManager(), TAG_CREATE_COLLECTION);
             }
         });
+
+        bindDialogs();
+    }
+
+    private void bindDialogs() {
+        CreateCollectionDialogFragment creationFragment;
+        creationFragment = (CreateCollectionDialogFragment) getSupportFragmentManager()
+                .findFragmentByTag(TAG_CREATE_COLLECTION);
+        if (creationFragment != null) {
+            creationFragment.setDialogListener(getCreationDialogListener());
+        }
+    }
+
+    private CreateCollectionDialogFragment.Listener getCreationDialogListener() {
+        return new CreateCollectionDialogFragment.Listener() {
+            @Override
+            public void onCollectionCreate(@NonNull String collectionName) {
+                if (!TextUtils.isEmpty(collectionName)) {
+                    presenter.addCollection(new Collection(collectionName));
+                }
+            }
+
+            @Override
+            public void onCancel() {
+                // Do nothing
+            }
+        };
     }
 
     @Override
