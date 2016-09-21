@@ -1,6 +1,7 @@
 package net.aohayou.collector.collections;
 
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
@@ -12,7 +13,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import net.aohayou.collector.R;
-import net.aohayou.collector.model.Collection;
 import net.aohayou.collector.util.ActivityUtils;
 
 import butterknife.BindView;
@@ -46,7 +46,7 @@ public class CollectionsActivity extends AppCompatActivity {
         }
 
         // Setup the presenter
-        presenter = new CollectionsPresenter(collectionsFragment);
+        presenter = new CollectionsPresenter(collectionsFragment, savedInstanceState);
 
         //TODO should be in the view
         fab.setOnClickListener(new View.OnClickListener() {
@@ -76,7 +76,7 @@ public class CollectionsActivity extends AppCompatActivity {
             @Override
             public void onCollectionCreate(@NonNull String collectionName) {
                 if (!TextUtils.isEmpty(collectionName)) {
-                    presenter.addCollection(new Collection(collectionName));
+                    presenter.addCollection(collectionName);
                 }
             }
 
@@ -85,6 +85,12 @@ public class CollectionsActivity extends AppCompatActivity {
                 // Do nothing
             }
         };
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        presenter.onSaveInstanceState(outState);
     }
 
     @Override

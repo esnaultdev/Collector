@@ -1,5 +1,6 @@
 package net.aohayou.collector.collections;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import net.aohayou.collector.BasePresenter;
@@ -14,9 +15,9 @@ public interface CollectionsContract {
 
         void showCollections(@NonNull List<Collection> collections);
 
-        void showRenameDialog(@NonNull Collection collection);
+        void showRenameDialog(@NonNull String collectionName);
 
-        void showDeleteDialog(@NonNull Collection collection);
+        void showDeleteDialog();
     }
 
     interface Presenter extends BasePresenter {
@@ -25,14 +26,20 @@ public interface CollectionsContract {
 
         // void openCollectionDetails(@NonNull Collection collection);
 
-        void addCollection(@NonNull Collection collection);
+        void addCollection(@NonNull String collectionName);
 
         void onRenameRequest(@NonNull Collection collection);
 
-        void renameCollection(@NonNull Collection collection, String newName);
+        void onRenameCancel();
+
+        void onRename(@NonNull String newName);
 
         void onDeleteRequest(@NonNull Collection collection);
 
-        void deleteCollection(@NonNull Collection collection);
+        void onDeleteCancel();
+
+        void onDelete();
+
+        void onSaveInstanceState(Bundle outState);
     }
 }
