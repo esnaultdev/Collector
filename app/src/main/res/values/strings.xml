@@ -2,13 +2,13 @@
     <string name="app_name">Collector</string>
     <string name="action_settings">Settings</string>
 
-    <string name="collection_creation_title">Create a new collection</string>
-    <string name="collection_rename_title">Rename the collection</string>
     <string name="collection_delete_text">Delete the collection?</string>
     <string name="collection_name_hint">Collection name</string>
 
+    <!-- Dialog actions -->
     <string name="cancel">Cancel</string>
     <string name="create">Create</string>
     <string name="rename">Rename</string>
     <string name="delete">Delete</string>
+    
 </resources>

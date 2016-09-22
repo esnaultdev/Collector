@@ -49,8 +49,7 @@ public class RenameCollectionDialogFragment extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        Dialog dialog = builder.setTitle(R.string.collection_rename_title)
-                .setView(R.layout.dialog_collection_create_rename)
+        Dialog dialog = builder.setView(R.layout.dialog_collection_create_rename)
                 .setPositiveButton(R.string.rename, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
