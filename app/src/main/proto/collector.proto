@@ -18,5 +18,5 @@ message Collection {
 }
 
 message Library {
-    repeated Collection collection = 1;
+    map<string, Collection> collections = 1;
 }

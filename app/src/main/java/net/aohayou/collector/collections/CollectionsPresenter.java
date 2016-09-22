@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import net.aohayou.collector.data.CollectorProtos.Collection;
+import net.aohayou.collector.data.source.CollectionDataSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,22 +12,24 @@ import java.util.UUID;
 
 public class CollectionsPresenter implements CollectionsContract.Presenter {
 
-    private static final String BUNDLE_COLLECTION_TO_UPDATE_ID = "CollectionToUpdateId";
+    private static final String BUNDLE_INDEX_TO_UPDATE = "IndexToUpdate";
 
     private final CollectionsContract.View view;
-    private final List<Collection> collections = new ArrayList<>();
+    private final CollectionDataSource dataSource;
 
-    private String collectionToUpdateId;
+    private List<Collection> collections = new ArrayList<>(); // ordered list of collections
+    private int indexToUpdate = -1;
 
     public CollectionsPresenter(@NonNull CollectionsContract.View view,
+                                @NonNull CollectionDataSource dataSource,
                                 Bundle savedInstanceState) {
         this.view = view;
         view.setPresenter(this);
+        this.dataSource = dataSource;
 
-        if (savedInstanceState != null) {
-            String collectionToUpdateId =
-                    savedInstanceState.getString(BUNDLE_COLLECTION_TO_UPDATE_ID);
-        }
+        dataSource.load();
+
+        loadSavedInstanceState(savedInstanceState);
     }
 
     @Override
@@ -36,12 +39,26 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
 
     @Override
     public void loadCollections() {
-        // tmp dataset
-        if (collections.size() == 0) {
-            collections.add(createCollection("Collection A"));
-            collections.add(createCollection("Collection B"));
-            collections.add(createCollection("Collection C"));
-        }
+        dataSource.getCollections(new CollectionDataSource.GetCollectionsCallback() {
+            @Override
+            public void onCollectionsLoaded(@NonNull List<Collection> collections) {
+                CollectionsPresenter.this.collections = new ArrayList<>(collections);
+                // TODO order the list
+                view.showCollections(collections);
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+                // TODO display an informative view
+            }
+        });
+    }
+
+    @Override
+    public void addCollection(@NonNull String collectionName) {
+        Collection collection  = createCollection(collectionName);
+        dataSource.createCollection(collection);
+        collections.add(collection); // TODO insert at the right position
 
         view.showCollections(collections);
     }
@@ -49,65 +66,80 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
     private Collection createCollection(@NonNull String name) {
         String uuid = UUID.randomUUID().toString();
         return Collection.newBuilder()
-                        .setId(uuid)
-                        .setName(name)
-                        .build();
-    }
-
-    @Override
-    public void addCollection(@NonNull String collectionName) {
-        Collection collection  = createCollection(collectionName);
-        collections.add(collection);
-        // Collections.sort(collections);  TODO create a CollectionComparator
-        view.showCollections(collections);
+                .setId(uuid)
+                .setName(name)
+                .build();
     }
 
     @Override
     public void onRenameRequest(@NonNull Collection collection) {
-        collectionToUpdateId = collection.getId();
+        setCollectionToUpdate(collection);
         view.showRenameDialog(collection.getName());
     }
 
     @Override
     public void onRenameCancel() {
-        collectionToUpdateId = null;
+        resetCollectionToUpdate();
     }
 
     @Override
     public void onRename(@NonNull String newName) {
-        Collection newCollection =
-                Collection.newBuilder()
-                        .setId(collectionToUpdateId)
-                        .setName(newName)
-                        .build();
-        // collections.remove(collectionToUpdate); TODO
+        Collection collection = collections.get(indexToUpdate);
+        dataSource.renameCollection(collection, newName);
+
+        collections.remove(indexToUpdate);
+        Collection newCollection = Collection.newBuilder(collection)
+                .setName(newName)
+                .build();
+
         collections.add(newCollection);
-        // Collections.sort(collections);  TODO create a CollectionComparator
-        collectionToUpdateId = null;
+
+        resetCollectionToUpdate();
 
         view.showCollections(collections);
     }
 
     @Override
     public void onDeleteRequest(@NonNull Collection collection) {
+        setCollectionToUpdate(collection);
         view.showDeleteDialog();
     }
 
     @Override
     public void onDeleteCancel() {
-        collectionToUpdateId = null;
+        resetCollectionToUpdate();
     }
 
     @Override
     public void onDelete() {
-        // collections.remove(collectionToUpdate); TODO
+        Collection collection = collections.remove(indexToUpdate);
+        dataSource.deleteCollection(collection);
+        resetCollectionToUpdate();
+
         view.showCollections(collections);
+    }
+
+    private void setCollectionToUpdate(@NonNull Collection collection) {
+        // FIXME Use the collection id as a fallback if the list has been updated. This should
+        // only occur after a network update.
+        indexToUpdate = collections.indexOf(collection);
+    }
+
+    private void resetCollectionToUpdate() {
+        indexToUpdate = -1;
     }
 
     @Override
     public void onSaveInstanceState(Bundle outBundle) {
-        if (collectionToUpdateId != null) {
-            outBundle.putString(BUNDLE_COLLECTION_TO_UPDATE_ID, collectionToUpdateId);
+        if (indexToUpdate != -1) {
+            outBundle.putInt(BUNDLE_INDEX_TO_UPDATE, indexToUpdate);
+        }
+        dataSource.apply(); //FIXME should it be somewhere else?
+    }
+
+    private void loadSavedInstanceState(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            indexToUpdate = savedInstanceState.getInt(BUNDLE_INDEX_TO_UPDATE);
         }
     }
 }

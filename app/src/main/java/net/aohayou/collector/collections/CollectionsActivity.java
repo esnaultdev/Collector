@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import net.aohayou.collector.R;
+import net.aohayou.collector.data.source.FileCollectionDataSource;
 import net.aohayou.collector.util.ActivityUtils;
 
 import butterknife.BindView;
@@ -45,7 +46,9 @@ public class CollectionsActivity extends AppCompatActivity {
         }
 
         // Setup the presenter
-        presenter = new CollectionsPresenter(collectionsFragment, savedInstanceState);
+        presenter = new CollectionsPresenter(collectionsFragment,
+                new FileCollectionDataSource(this),
+                savedInstanceState);
 
         //TODO should be in the view
         fab.setOnClickListener(new View.OnClickListener() {

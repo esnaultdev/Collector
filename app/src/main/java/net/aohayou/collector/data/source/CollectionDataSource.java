@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface CollectionDataSource {
 
+    void load();
+
     interface GetCollectionCallback {
 
         void onCollectionLoaded(@NonNull Collection collection);
@@ -17,16 +19,16 @@ public interface CollectionDataSource {
 
     interface GetCollectionsCallback {
 
-        void onCollectionsLoaded(@NonNull List<Collection> tasks);
+        void onCollectionsLoaded(@NonNull List<Collection> collections);
 
         void onDataNotAvailable();
     }
 
-    void createCollection(@NonNull Collection collection);
-
     void getCollection(@NonNull String collectionId, @NonNull GetCollectionCallback callback);
 
     void getCollections(@NonNull GetCollectionsCallback callback);
+
+    void createCollection(@NonNull Collection collection);
 
     void renameCollection(@NonNull Collection collection, @NonNull String newName);
 
@@ -35,4 +37,6 @@ public interface CollectionDataSource {
     void deleteCollection(@NonNull Collection collection);
 
     void deleteCollection(@NonNull String collectionId);
+
+    void apply();
 }
