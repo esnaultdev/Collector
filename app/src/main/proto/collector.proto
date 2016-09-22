@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package collector;
+
+option java_package = "net.aohayou.collector.data";
+option java_outer_classname = "CollectorProtos";
+
+message Collection {
+    string id = 1; // random uuid
+    string name = 2;
+
+    message Entry {
+        int32 first = 1; // index of the first numbered element
+        int32 last = 2;  // index of the last following numbered element
+    }
+
+    repeated Entry entry = 3; // should always be stored by asc order
+}
+
+message Library {
+    repeated Collection collection = 1;
+}

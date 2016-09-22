@@ -3,20 +3,20 @@ package net.aohayou.collector.collections;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
-import net.aohayou.collector.model.Collection;
+import net.aohayou.collector.data.CollectorProtos.Collection;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 public class CollectionsPresenter implements CollectionsContract.Presenter {
 
-    private static final String BUNDLE_COLLECTION_TO_UPDATE_NAME = "CollectionToUpdateName";
+    private static final String BUNDLE_COLLECTION_TO_UPDATE_ID = "CollectionToUpdateId";
 
     private final CollectionsContract.View view;
     private final List<Collection> collections = new ArrayList<>();
 
-    private Collection collectionToUpdate;
+    private String collectionToUpdateId;
 
     public CollectionsPresenter(@NonNull CollectionsContract.View view,
                                 Bundle savedInstanceState) {
@@ -24,11 +24,8 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
         view.setPresenter(this);
 
         if (savedInstanceState != null) {
-            String collectionToUpdateName =
-                    savedInstanceState.getString(BUNDLE_COLLECTION_TO_UPDATE_NAME);
-            if (collectionToUpdateName != null) {
-                collectionToUpdate = new Collection(collectionToUpdateName);
-            }
+            String collectionToUpdateId =
+                    savedInstanceState.getString(BUNDLE_COLLECTION_TO_UPDATE_ID);
         }
     }
 
@@ -41,38 +38,53 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
     public void loadCollections() {
         // tmp dataset
         if (collections.size() == 0) {
-            collections.add(new Collection("Collection A"));
-            collections.add(new Collection("Collection B"));
-            collections.add(new Collection("Collection C"));
+            collections.add(createCollection("Collection A"));
+            collections.add(createCollection("Collection B"));
+            collections.add(createCollection("Collection C"));
         }
 
         view.showCollections(collections);
     }
 
+    private Collection createCollection(@NonNull String name) {
+        String uuid = UUID.randomUUID().toString();
+        return Collection.newBuilder()
+                        .setId(uuid)
+                        .setName(name)
+                        .build();
+    }
+
     @Override
     public void addCollection(@NonNull String collectionName) {
-        Collection collection = new Collection(collectionName);
+        Collection collection  = createCollection(collectionName);
         collections.add(collection);
-        Collections.sort(collections);
+        // Collections.sort(collections);  TODO create a CollectionComparator
         view.showCollections(collections);
     }
 
     @Override
     public void onRenameRequest(@NonNull Collection collection) {
-        collectionToUpdate = collection;
+        collectionToUpdateId = collection.getId();
         view.showRenameDialog(collection.getName());
     }
 
     @Override
     public void onRenameCancel() {
-        collectionToUpdate = null;
+        collectionToUpdateId = null;
     }
 
     @Override
     public void onRename(@NonNull String newName) {
-        collections.remove(collectionToUpdate);
-        collections.add(new Collection(newName));
-        Collections.sort(collections);
+        Collection newCollection =
+                Collection.newBuilder()
+                        .setId(collectionToUpdateId)
+                        .setName(newName)
+                        .build();
+        // collections.remove(collectionToUpdate); TODO
+        collections.add(newCollection);
+        // Collections.sort(collections);  TODO create a CollectionComparator
+        collectionToUpdateId = null;
+
         view.showCollections(collections);
     }
 
@@ -83,19 +95,19 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
 
     @Override
     public void onDeleteCancel() {
-        collectionToUpdate = null;
+        collectionToUpdateId = null;
     }
 
     @Override
     public void onDelete() {
-        collections.remove(collectionToUpdate);
+        // collections.remove(collectionToUpdate); TODO
         view.showCollections(collections);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outBundle) {
-        if (collectionToUpdate != null) {
-            outBundle.putString(BUNDLE_COLLECTION_TO_UPDATE_NAME, collectionToUpdate.getName());
+        if (collectionToUpdateId != null) {
+            outBundle.putString(BUNDLE_COLLECTION_TO_UPDATE_ID, collectionToUpdateId);
         }
     }
 }

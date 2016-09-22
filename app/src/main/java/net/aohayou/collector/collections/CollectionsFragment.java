@@ -11,7 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import net.aohayou.collector.model.Collection;
+import net.aohayou.collector.data.CollectorProtos.Collection;
 import net.aohayou.collector.R;
 
 import java.util.ArrayList;
