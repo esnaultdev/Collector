@@ -55,6 +55,11 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
     }
 
     @Override
+    public void openCollectionDetails(@NonNull Collection collection) {
+        view.showCollectionDetails(collection.getId());
+    }
+
+    @Override
     public void addCollection(@NonNull String collectionName) {
         Collection collection  = createCollection(collectionName);
         dataSource.createCollection(collection);

@@ -15,6 +15,8 @@ public interface CollectionsContract {
 
         void showCollections(@NonNull List<Collection> collections);
 
+        void showCollectionDetails(@NonNull String collectionId);
+
         void showRenameDialog(@NonNull String collectionName);
 
         void showDeleteDialog();
@@ -24,7 +26,7 @@ public interface CollectionsContract {
 
         void loadCollections();
 
-        // void openCollectionDetails(@NonNull Collection collection);
+        void openCollectionDetails(@NonNull Collection collection);
 
         void addCollection(@NonNull String collectionName);
 

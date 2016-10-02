@@ -26,6 +26,7 @@ import butterknife.ButterKnife;
 public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.ViewHolder> {
 
     public interface CollectionInteractionListener {
+        void onClick(@NonNull Collection collection);
         void onRename(@NonNull Collection collection);
         void onDelete(@NonNull Collection collection);
     }
@@ -99,6 +100,12 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
                             }
                         });
                     }
+                }
+            });
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onClick(ViewHolder.this.item);
                 }
             });
         }

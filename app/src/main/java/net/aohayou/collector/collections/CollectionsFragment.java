@@ -1,6 +1,7 @@
 package net.aohayou.collector.collections;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import net.aohayou.collector.collectiondetail.CollectionDetailActivity;
+import net.aohayou.collector.data.CollectorProtos;
 import net.aohayou.collector.data.CollectorProtos.Collection;
 import net.aohayou.collector.R;
 
@@ -53,6 +56,11 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
             @Override
             public void onDelete(@NonNull Collection collection) {
                 presenter.onDeleteRequest(collection);
+            }
+
+            @Override
+            public void onClick(@NonNull Collection collection) {
+                presenter.openCollectionDetails(collection);
             }
         });
     }
@@ -109,6 +117,13 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
     @Override
     public void showCollections(@NonNull List<Collection> collections) {
         adapter.replaceData(collections);
+    }
+
+    @Override
+    public void showCollectionDetails(@NonNull String collectionId) {
+        Intent intent = new Intent(getActivity(), CollectionDetailActivity.class);
+        CollectionDetailActivity.setupIntent(intent, collectionId);
+        startActivity(intent);
     }
 
     @Override

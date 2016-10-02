@@ -11,4 +11,11 @@
     <string name="rename">Rename</string>
     <string name="delete">Delete</string>
 
+    <string name="title_activity_collection_detail">Details</string>
+    <plurals name="numberOfItems">
+        <item quantity="zero">No elements.</item>
+        <item quantity="one">%d element.</item>
+        <item quantity="other">%d elements.</item>
+    </plurals>
+
 </resources>
