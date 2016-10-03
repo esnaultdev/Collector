@@ -13,7 +13,11 @@ public interface CollectionsContract {
 
     interface View extends BaseView<Presenter> {
 
-        void showCollections(@NonNull List<Collection> collections);
+        void bindCollections(@NonNull List<Collection> collections);
+
+        void displayCollectionAdded(int index);
+
+        void displayCollectionRemoved(int index);
 
         void showCollectionDetails(@NonNull String collectionId);
 

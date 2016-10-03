@@ -114,8 +114,18 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
     }
 
     @Override
-    public void showCollections(@NonNull List<Collection> collections) {
+    public void bindCollections(@NonNull List<Collection> collections) {
         adapter.replaceData(collections);
+    }
+
+    @Override
+    public void displayCollectionAdded(int index) {
+        adapter.notifyItemInserted(index);
+    }
+
+    @Override
+    public void displayCollectionRemoved(int index) {
+        adapter.notifyItemRemoved(index);
     }
 
     @Override

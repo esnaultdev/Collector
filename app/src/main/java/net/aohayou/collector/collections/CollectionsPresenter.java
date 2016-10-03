@@ -2,30 +2,26 @@ package net.aohayou.collector.collections;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Log;
-
-import com.google.common.base.Preconditions;
-import com.google.protobuf.InvalidProtocolBufferException;
 
 import net.aohayou.collector.data.Collection;
-import net.aohayou.collector.data.CollectorProtos;
 import net.aohayou.collector.data.source.CollectionDataSource;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.TreeSet;
+import java.util.ListIterator;
 
 public class CollectionsPresenter implements CollectionsContract.Presenter {
 
-    private static final String TAG = "CollectionPresenter";
-    private static final String BUNDLE_COLLECTION_TO_UPDATE = "CollectionToUpdate";
+    private static final String BUNDLE_INDEX_TO_UPDATE = "IndexToUpdate";
 
     private final CollectionsContract.View view;
     private final CollectionDataSource dataSource;
 
-    private TreeSet<Collection> collections;
-    private Collection collectionToUpdate = null;
+    private List<Collection> collections = new ArrayList<>(); // ordered list of collections
+    private Comparator<Collection> comparator;
+    private int indexToUpdate = -1;
 
     public CollectionsPresenter(@NonNull CollectionsContract.View view,
                                 @NonNull CollectionDataSource dataSource,
@@ -35,15 +31,14 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
         this.dataSource = dataSource;
 
         dataSource.load();
-
         loadSavedState(savedState);
 
-        collections = new TreeSet<>(new Comparator<Collection>() {
+        comparator = new Comparator<Collection>() {
             @Override
             public int compare(Collection c1, Collection c2) {
                 return c1.getName().compareTo(c2.getName());
             }
-        });
+        };
     }
 
     @Override
@@ -53,14 +48,12 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
 
     @Override
     public void loadCollections() {
-        collections.clear();
         dataSource.getCollections(new CollectionDataSource.GetCollectionsCallback() {
             @Override
             public void onCollectionsLoaded(@NonNull List<Collection> collections) {
-                for (Collection collection : collections) {
-                    CollectionsPresenter.this.collections.add(collection);
-                }
-                showCollections();
+                CollectionsPresenter.this.collections = new ArrayList<>(collections);
+                Collections.sort(CollectionsPresenter.this.collections, comparator);
+                view.bindCollections(CollectionsPresenter.this.collections);
             }
 
             @Override
@@ -70,10 +63,6 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
         });
     }
 
-    private void showCollections() {
-        view.showCollections(new ArrayList<>(collections));
-    }
-
     @Override
     public void openCollectionDetails(@NonNull Collection collection) {
         view.showCollectionDetails(collection.getId());
@@ -81,76 +70,90 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
 
     @Override
     public void addCollection(@NonNull String collectionName) {
-        Collection collection = Collection.createCollection(collectionName);
+        Collection collection  = Collection.createCollection(collectionName);
         dataSource.createCollection(collection);
-        collections.add(collection);
-        showCollections();
+        int newIndex = insertInOrder(collection);
+
+        view.displayCollectionAdded(newIndex);
     }
 
     @Override
     public void onRenameRequest(@NonNull Collection collection) {
-        collectionToUpdate = collection;
+        setCollectionToUpdate(collection);
         view.showRenameDialog(collection.getName());
     }
 
     @Override
     public void onRenameCancel() {
-        collectionToUpdate = null;
+        resetCollectionToUpdate();
     }
 
     @Override
     public void onRename(@NonNull String newName) {
-        Preconditions.checkNotNull(collectionToUpdate);
+        Collection collection = collections.get(indexToUpdate);
+        dataSource.renameCollection(collection, newName);
 
-        collections.remove(collectionToUpdate);
-        dataSource.renameCollection(collectionToUpdate, newName);
-        collections.add(collectionToUpdate.setName(newName));
-        collectionToUpdate = null;
-        showCollections();
+        collections.remove(indexToUpdate);
+        view.displayCollectionRemoved(indexToUpdate);
+
+        int newIndex = insertInOrder(collection.setName(newName));
+        view.displayCollectionAdded(newIndex);
+
+        resetCollectionToUpdate();
     }
 
     @Override
     public void onDeleteRequest(@NonNull Collection collection) {
-        collectionToUpdate = collection;
+        setCollectionToUpdate(collection);
         view.showDeleteDialog();
     }
 
     @Override
     public void onDeleteCancel() {
-        collectionToUpdate = null;
+        resetCollectionToUpdate();
     }
 
     @Override
     public void onDelete() {
-        Preconditions.checkNotNull(collectionToUpdate);
+        Collection collection = collections.remove(indexToUpdate);
+        dataSource.deleteCollection(collection);
+        view.displayCollectionRemoved(indexToUpdate);
+        resetCollectionToUpdate();
+    }
 
-        collections.remove(collectionToUpdate);
-        dataSource.deleteCollection(collectionToUpdate);
-        collectionToUpdate = null;
+    private int insertInOrder(@NonNull Collection collection) {
+        ListIterator<Collection> it = collections.listIterator();
+        while (it.hasNext()) {
+            Collection current = it.next();
+            if (comparator.compare(collection, current) < 0) {
+                it.previous();
+                break;
+            }
+        }
+        it.add(collection);
+        return it.previousIndex();
+    }
 
-        showCollections();
+    private void setCollectionToUpdate(@NonNull Collection collection) {
+        // FIXME Use the collection id as a fallback if the list has been updated. This should
+        // only occur after a network update.
+        indexToUpdate = collections.indexOf(collection);
+    }
+
+    private void resetCollectionToUpdate() {
+        indexToUpdate = -1;
     }
 
     @Override
     public void onSaveState(Bundle outBundle) {
-        if (collectionToUpdate != null) {
-            outBundle.putByteArray(
-                    BUNDLE_COLLECTION_TO_UPDATE, collectionToUpdate.toProto().toByteArray());
+        if (indexToUpdate != -1) {
+            outBundle.putInt(BUNDLE_INDEX_TO_UPDATE, indexToUpdate);
         }
     }
 
     private void loadSavedState(Bundle savedState) {
         if (savedState != null) {
-            byte[] byteArray = savedState.getByteArray(BUNDLE_COLLECTION_TO_UPDATE);
-            if (byteArray != null) {
-                try {
-                    CollectorProtos.Collection collectionProto =
-                            CollectorProtos.Collection.parseFrom(byteArray);
-                    collectionToUpdate = Collection.fromProto(collectionProto);
-                } catch (InvalidProtocolBufferException e) {
-                    Log.e(TAG, "Invalid saved collection:" + e);
-                }
-            }
+            indexToUpdate = savedState.getInt(BUNDLE_INDEX_TO_UPDATE);
         }
     }
 
