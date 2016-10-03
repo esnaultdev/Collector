@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 
 import net.aohayou.collector.BasePresenter;
 import net.aohayou.collector.BaseView;
-import net.aohayou.collector.data.CollectorProtos.Collection;
+import net.aohayou.collector.data.Collection;
 
 import java.util.List;
 

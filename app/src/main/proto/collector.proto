@@ -9,12 +9,12 @@ message Collection {
     string id = 1; // random uuid
     string name = 2;
 
-    message Entry {
-        int32 first = 1; // index of the first numbered element
-        int32 last = 2;  // index of the last following numbered element
+    message Formula {
+        int32 elementCount = 1;
+        string formulaString = 2;
     }
 
-    repeated Entry entry = 3; // should always be stored by asc order
+    Formula formula = 3;
 }
 
 message Library {

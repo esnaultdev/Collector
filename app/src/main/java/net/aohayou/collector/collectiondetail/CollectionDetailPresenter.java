@@ -2,7 +2,7 @@ package net.aohayou.collector.collectiondetail;
 
 import android.support.annotation.NonNull;
 
-import net.aohayou.collector.data.CollectorProtos;
+import net.aohayou.collector.data.Collection;
 import net.aohayou.collector.data.source.CollectionDataSource;
 
 public class CollectionDetailPresenter implements CollectionDetailContract.Presenter {
@@ -30,8 +30,8 @@ public class CollectionDetailPresenter implements CollectionDetailContract.Prese
         dataSource.load();
         dataSource.getCollection(collectionId, new CollectionDataSource.GetCollectionCallback() {
             @Override
-            public void onCollectionLoaded(@NonNull CollectorProtos.Collection collection) {
-                view.displayEntryCount(collection.getEntryCount());
+            public void onCollectionLoaded(@NonNull Collection collection) {
+                view.displayEntryCount(collection.getFormula().getElementCount());
                 view.displayCollectionName(collection.getName());
             }
 

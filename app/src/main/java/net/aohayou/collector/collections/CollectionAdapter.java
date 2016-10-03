@@ -13,7 +13,7 @@ import android.widget.TextView;
 import static com.google.common.base.Preconditions.*;
 
 import net.aohayou.collector.R;
-import net.aohayou.collector.data.CollectorProtos.Collection;
+import net.aohayou.collector.data.Collection;
 
 import java.util.List;
 

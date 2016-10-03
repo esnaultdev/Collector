@@ -4,10 +4,10 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import static com.google.common.base.Preconditions.*;
+import net.aohayou.collector.data.Collection;
+import net.aohayou.collector.data.CollectorProtos;
 
-import net.aohayou.collector.data.CollectorProtos.Collection;
-import net.aohayou.collector.data.CollectorProtos.Library;
+import static com.google.common.base.Preconditions.*;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -20,7 +20,7 @@ public class FileCollectionDataSource implements CollectionDataSource {
     private static final String TAG = "FileDataSource"; // Logging tag
     private static final String FILENAME  = "collection";
 
-    private Library library;
+    private CollectorProtos.Library library;
     private final Context context;
     private boolean loaded = false;
 
@@ -32,13 +32,13 @@ public class FileCollectionDataSource implements CollectionDataSource {
     public void load() {
         try {
             FileInputStream fis = context.openFileInput(FILENAME);
-            library = Library.parseFrom(fis);
+            library = CollectorProtos.Library.parseFrom(fis);
         } catch (IOException e) {
             Log.w(TAG, "Could not parse " + FILENAME);
         }
 
         if (library == null) {
-            library = Library.newBuilder().build();
+            library = CollectorProtos.Library.newBuilder().build();
         }
 
         loaded = true;
@@ -53,10 +53,11 @@ public class FileCollectionDataSource implements CollectionDataSource {
                               @NonNull GetCollectionCallback callback) {
         checkState(isDataLoaded());
 
-        Collection collection = library.getCollectionsMap().get(collectionId);
-        if (collection == null) {
+        CollectorProtos.Collection collectionProto = library.getCollectionsMap().get(collectionId);
+        if (collectionProto == null) {
             callback.onDataNotAvailable();
         } else {
+            Collection collection = Collection.fromProto(collectionProto);
             callback.onCollectionLoaded(collection);
         }
     }
@@ -65,7 +66,15 @@ public class FileCollectionDataSource implements CollectionDataSource {
     public void getCollections(@NonNull GetCollectionsCallback callback) {
         checkState(isDataLoaded());
 
-        List<Collection> collections = new ArrayList<>(library.getCollectionsMap().values());
+        List<Collection> collections = new ArrayList<>();
+        List<CollectorProtos.Collection> collectionsProtos
+                = new ArrayList<>(library.getCollectionsMap().values());
+        //TODO avoid this loop
+        for (CollectorProtos.Collection collectionProto : collectionsProtos) {
+            Collection collection = Collection.fromProto(collectionProto);
+            collections.add(collection);
+        }
+
         if (collections.isEmpty()) {
             callback.onDataNotAvailable();
         } else {
@@ -77,28 +86,32 @@ public class FileCollectionDataSource implements CollectionDataSource {
     public void createCollection(@NonNull Collection collection) {
         checkState(isDataLoaded());
 
-        library = Library.newBuilder(library)
-                .putCollections(collection.getId(), collection)
+        library = CollectorProtos.Library.newBuilder(library)
+                .putCollections(collection.getId(), collection.toProto())
                 .build();
     }
 
     @Override
     public void renameCollection(@NonNull Collection collection, @NonNull String newName) {
-        checkState(isDataLoaded());
-
-        Collection newCollection = Collection.newBuilder(collection)
-                .setName(newName)
-                .build();
-
-        library = Library.newBuilder(library)
-                .putCollections(collection.getId(), newCollection)
-                .build();
+        renameCollection(collection.toProto(), newName);
     }
 
     @Override
     public void renameCollection(@NonNull String collectionId, @NonNull String newName) {
-        checkState(isDataLoaded());
         renameCollection(library.getCollectionsMap().get(collectionId), newName);
+    }
+
+    private void renameCollection(@NonNull CollectorProtos.Collection collection,
+                                  @NonNull String newName) {
+        checkState(isDataLoaded());
+
+        CollectorProtos.Collection newCollection = CollectorProtos.Collection.newBuilder(collection)
+                .setName(newName)
+                .build();
+
+        library = CollectorProtos.Library.newBuilder(library)
+                .putCollections(collection.getId(), newCollection)
+                .build();
     }
 
     @Override
@@ -111,7 +124,7 @@ public class FileCollectionDataSource implements CollectionDataSource {
     public void deleteCollection(@NonNull String collectionId) {
         checkState(isDataLoaded());
 
-        library = Library.newBuilder(library)
+        library = CollectorProtos.Library.newBuilder(library)
                 .removeCollections(collectionId)
                 .build();
     }

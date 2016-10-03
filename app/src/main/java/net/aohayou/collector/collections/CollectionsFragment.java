@@ -13,8 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import net.aohayou.collector.collectiondetail.CollectionDetailActivity;
-import net.aohayou.collector.data.CollectorProtos;
-import net.aohayou.collector.data.CollectorProtos.Collection;
+import net.aohayou.collector.data.Collection;
 import net.aohayou.collector.R;
 
 import java.util.ArrayList;

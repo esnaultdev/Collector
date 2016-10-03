@@ -3,12 +3,11 @@ package net.aohayou.collector.collections;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
-import net.aohayou.collector.data.CollectorProtos.Collection;
+import net.aohayou.collector.data.Collection;
 import net.aohayou.collector.data.source.CollectionDataSource;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class CollectionsPresenter implements CollectionsContract.Presenter {
 
@@ -69,11 +68,7 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
     }
 
     private Collection createCollection(@NonNull String name) {
-        String uuid = UUID.randomUUID().toString();
-        return Collection.newBuilder()
-                .setId(uuid)
-                .setName(name)
-                .build();
+        return Collection.createCollection(name);
     }
 
     @Override
@@ -93,11 +88,7 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
         dataSource.renameCollection(collection, newName);
 
         collections.remove(indexToUpdate);
-        Collection newCollection = Collection.newBuilder(collection)
-                .setName(newName)
-                .build();
-
-        collections.add(newCollection);
+        collections.add(collection.setName(newName));
 
         resetCollectionToUpdate();
 
