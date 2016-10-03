@@ -59,6 +59,16 @@ public class Collection {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Collection that = (Collection) o;
+
+        return getId().equals(that.getId());
+    }
+
     public static class Formula {
 
         private String formulaString;

@@ -92,7 +92,13 @@ public class CollectionsActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        presenter.onSaveInstanceState(outState);
+        presenter.onSaveState(outState);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        presenter.onSaveData();
     }
 
     @Override

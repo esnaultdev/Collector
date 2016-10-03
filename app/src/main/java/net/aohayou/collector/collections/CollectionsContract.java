@@ -42,6 +42,8 @@ public interface CollectionsContract {
 
         void onDelete();
 
-        void onSaveInstanceState(Bundle outState);
+        void onSaveState(Bundle outState);
+
+        void onSaveData();
     }
 }
