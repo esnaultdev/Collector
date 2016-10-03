@@ -115,17 +115,17 @@ public class FileCollectionDataSource implements CollectionDataSource {
                                   @NonNull String newName) {
         checkState(isDataLoaded());
 
-        CollectorProtos.Collection newCollection = CollectorProtos.Collection.newBuilder(collection)
+        CollectorProtos.Collection newProto = CollectorProtos.Collection.newBuilder(collection)
                 .setName(newName)
                 .build();
-
-        replaceCollectionInLibrary(newCollection);
+        replaceCollection(Collection.fromProto(newProto));
     }
 
-    private void replaceCollectionInLibrary(@NonNull CollectorProtos.Collection collection) {
+    private void replaceCollection(@NonNull Collection collection) {
+        collections.put(collection.getId(), collection);
         library = CollectorProtos.Library.newBuilder(library)
                 .removeCollection(getCollectionIndexById(collection.getId()))
-                .addCollection(collection)
+                .addCollection(collection.toProto())
                 .build();
     }
 
@@ -151,6 +151,8 @@ public class FileCollectionDataSource implements CollectionDataSource {
     @Override
     public void deleteCollection(@NonNull String collectionId) {
         checkState(isDataLoaded());
+
+        collections.remove(collectionId);
         library = CollectorProtos.Library.newBuilder(library)
                 .removeCollection(getCollectionIndexById(collectionId))
                 .build();
