@@ -13,7 +13,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FileCollectionDataSource implements CollectionDataSource {
 
@@ -21,6 +23,8 @@ public class FileCollectionDataSource implements CollectionDataSource {
     private static final String FILENAME  = "collection";
 
     private CollectorProtos.Library library;
+    private Map<String, Collection> collections;
+
     private final Context context;
     private boolean loaded = false;
 
@@ -30,6 +34,12 @@ public class FileCollectionDataSource implements CollectionDataSource {
 
     @Override
     public void load() {
+        loadLibrary();
+        convertCollections();
+        loaded = true;
+    }
+
+    private void loadLibrary() {
         try {
             FileInputStream fis = context.openFileInput(FILENAME);
             library = CollectorProtos.Library.parseFrom(fis);
@@ -40,8 +50,15 @@ public class FileCollectionDataSource implements CollectionDataSource {
         if (library == null) {
             library = CollectorProtos.Library.newBuilder().build();
         }
+    }
 
-        loaded = true;
+    private void convertCollections() {
+        collections = new HashMap<>();
+        List<CollectorProtos.Collection> collectionsProtos = library.getCollectionList();
+        for (CollectorProtos.Collection collectionProto : collectionsProtos) {
+            Collection collection = Collection.fromProto(collectionProto);
+            collections.put(collection.getId(), collection);
+        }
     }
 
     private boolean isDataLoaded() {
@@ -53,11 +70,11 @@ public class FileCollectionDataSource implements CollectionDataSource {
                               @NonNull GetCollectionCallback callback) {
         checkState(isDataLoaded());
 
-        CollectorProtos.Collection collectionProto = library.getCollectionsMap().get(collectionId);
-        if (collectionProto == null) {
+
+        Collection collection = collections.get(collectionId);
+        if (collection == null) {
             callback.onDataNotAvailable();
         } else {
-            Collection collection = Collection.fromProto(collectionProto);
             callback.onCollectionLoaded(collection);
         }
     }
@@ -66,19 +83,11 @@ public class FileCollectionDataSource implements CollectionDataSource {
     public void getCollections(@NonNull GetCollectionsCallback callback) {
         checkState(isDataLoaded());
 
-        List<Collection> collections = new ArrayList<>();
-        List<CollectorProtos.Collection> collectionsProtos
-                = new ArrayList<>(library.getCollectionsMap().values());
-        //TODO avoid this loop
-        for (CollectorProtos.Collection collectionProto : collectionsProtos) {
-            Collection collection = Collection.fromProto(collectionProto);
-            collections.add(collection);
-        }
-
-        if (collections.isEmpty()) {
+        List<Collection> collectionsList = new ArrayList<>(collections.values());
+        if (collectionsList.isEmpty()) {
             callback.onDataNotAvailable();
         } else {
-            callback.onCollectionsLoaded(collections);
+            callback.onCollectionsLoaded(collectionsList);
         }
     }
 
@@ -86,8 +95,9 @@ public class FileCollectionDataSource implements CollectionDataSource {
     public void createCollection(@NonNull Collection collection) {
         checkState(isDataLoaded());
 
+        collections.put(collection.getId(), collection);
         library = CollectorProtos.Library.newBuilder(library)
-                .putCollections(collection.getId(), collection.toProto())
+                .addCollection(collection.toProto())
                 .build();
     }
 
@@ -98,7 +108,7 @@ public class FileCollectionDataSource implements CollectionDataSource {
 
     @Override
     public void renameCollection(@NonNull String collectionId, @NonNull String newName) {
-        renameCollection(library.getCollectionsMap().get(collectionId), newName);
+        renameCollection(collections.get(collectionId), newName);
     }
 
     private void renameCollection(@NonNull CollectorProtos.Collection collection,
@@ -109,23 +119,40 @@ public class FileCollectionDataSource implements CollectionDataSource {
                 .setName(newName)
                 .build();
 
+        replaceCollectionInLibrary(newCollection);
+    }
+
+    private void replaceCollectionInLibrary(@NonNull CollectorProtos.Collection collection) {
         library = CollectorProtos.Library.newBuilder(library)
-                .putCollections(collection.getId(), newCollection)
+                .removeCollection(getCollectionIndexById(collection.getId()))
+                .addCollection(collection)
                 .build();
+    }
+
+    private int getCollectionIndexById(@NonNull String id) throws CollectionNotFoundException {
+        int index = -1;
+        for (int i = 0; i < library.getCollectionCount(); i++) {
+            if (library.getCollection(i).getId().equals(id)) {
+                index = i;
+                break;
+            }
+        }
+        if (index == -1) {
+            throw new CollectionNotFoundException(id);
+        }
+        return index;
     }
 
     @Override
     public void deleteCollection(@NonNull Collection collection) {
-        checkState(isDataLoaded());
         deleteCollection(collection.getId());
     }
 
     @Override
     public void deleteCollection(@NonNull String collectionId) {
         checkState(isDataLoaded());
-
         library = CollectorProtos.Library.newBuilder(library)
-                .removeCollections(collectionId)
+                .removeCollection(getCollectionIndexById(collectionId))
                 .build();
     }
 
