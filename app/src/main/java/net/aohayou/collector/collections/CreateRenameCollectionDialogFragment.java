@@ -7,6 +7,9 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
+import android.view.KeyEvent;
+import android.view.inputmethod.EditorInfo;
+import android.widget.TextView;
 
 import net.aohayou.collector.R;
 
@@ -128,6 +131,18 @@ public class CreateRenameCollectionDialogFragment extends DialogFragment {
 
         editText.setText(oldName);
         editText.setSelection(oldSelection);
+        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    AlertDialog dialog = (AlertDialog) getDialog();
+                    dialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
+                    handled = true;
+                }
+                return handled;
+            }
+        });
     }
 
     @Override
