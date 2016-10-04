@@ -94,8 +94,8 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
 
     private void bindDialogs() {
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        RenameCollectionDialogFragment renameDialog;
-        renameDialog = (RenameCollectionDialogFragment) fragmentManager
+        CreateRenameCollectionDialogFragment renameDialog;
+        renameDialog = (CreateRenameCollectionDialogFragment) fragmentManager
                 .findFragmentByTag(TAG_RENAME_COLLECTION);
         if (renameDialog != null) {
             renameDialog.setDialogListener(getRenameDialogListener());
@@ -137,18 +137,18 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
 
     @Override
     public void showRenameDialog(@NonNull String collectionName) {
-        RenameCollectionDialogFragment renameDialog;
-        renameDialog = RenameCollectionDialogFragment.createInstance(collectionName);
+        CreateRenameCollectionDialogFragment renameDialog;
+        renameDialog = CreateRenameCollectionDialogFragment.getInstance(collectionName);
         renameDialog.setDialogListener(getRenameDialogListener());
         renameDialog.show(getActivity().getSupportFragmentManager(), TAG_RENAME_COLLECTION);
     }
 
     @NonNull
-    private RenameCollectionDialogFragment.Listener
+    private CreateRenameCollectionDialogFragment.RenameListener
     getRenameDialogListener() {
-        return new RenameCollectionDialogFragment.Listener() {
+        return new CreateRenameCollectionDialogFragment.RenameListener() {
             @Override
-            public void onCollectionRenamed(@NonNull String newName, @NonNull String oldName) {
+            public void onCollectionRename(@NonNull String newName) {
                 presenter.onRename(newName);
             }
 

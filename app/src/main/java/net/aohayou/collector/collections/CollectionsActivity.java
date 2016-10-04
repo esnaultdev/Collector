@@ -54,8 +54,8 @@ public class CollectionsActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CreateCollectionDialogFragment creationDialog;
-                creationDialog = new CreateCollectionDialogFragment();
+                CreateRenameCollectionDialogFragment creationDialog;
+                creationDialog = CreateRenameCollectionDialogFragment.getInstance();
                 creationDialog.setDialogListener(getCreationDialogListener());
                 creationDialog.show(getSupportFragmentManager(), TAG_CREATE_COLLECTION);
             }
@@ -65,16 +65,16 @@ public class CollectionsActivity extends AppCompatActivity {
     }
 
     private void bindDialogs() {
-        CreateCollectionDialogFragment creationFragment;
-        creationFragment = (CreateCollectionDialogFragment) getSupportFragmentManager()
+        CreateRenameCollectionDialogFragment creationFragment;
+        creationFragment = (CreateRenameCollectionDialogFragment) getSupportFragmentManager()
                 .findFragmentByTag(TAG_CREATE_COLLECTION);
         if (creationFragment != null) {
             creationFragment.setDialogListener(getCreationDialogListener());
         }
     }
 
-    private CreateCollectionDialogFragment.Listener getCreationDialogListener() {
-        return new CreateCollectionDialogFragment.Listener() {
+    private CreateRenameCollectionDialogFragment.CreateListener getCreationDialogListener() {
+        return new CreateRenameCollectionDialogFragment.CreateListener() {
             @Override
             public void onCollectionCreate(@NonNull String collectionName) {
                 if (!TextUtils.isEmpty(collectionName)) {
