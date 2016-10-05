@@ -6,22 +6,22 @@ import android.text.TextUtils;
 import com.google.common.base.Preconditions;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class FormulaConverter {
 
-    public List<Range> parse(@NonNull String formulaString) throws InvalidFormulaException {
+    public List<Range> convert(@NonNull String formulaString) throws InvalidFormulaException {
         Preconditions.checkArgument(!TextUtils.isEmpty(formulaString));
 
 
         return new ArrayList<>();
     }
 
-    private static class Tokenizer {
+    // Visible for testing
+    static class Tokenizer {
 
-        private static class Token {
-            private enum Type {
+        static class Token {
+            enum Type {
                 NUMBER_LITERAL,
                 OPERATOR
             }
@@ -46,7 +46,7 @@ public class FormulaConverter {
 
         public static List<Token> tokenize(@NonNull CharSequence input)
                 throws InvalidFormulaException {
-            List<Token> tokens = new LinkedList<>();
+            List<Token> tokens = new ArrayList<>();
             int current = 0;
 
             while (current < input.length()) {
