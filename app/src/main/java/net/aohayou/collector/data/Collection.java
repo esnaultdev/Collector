@@ -5,6 +5,8 @@ import android.text.TextUtils;
 
 import com.google.common.base.Preconditions;
 
+import net.aohayou.collector.data.formula.Formula;
+
 import java.util.UUID;
 
 public class Collection {
@@ -67,38 +69,5 @@ public class Collection {
         Collection that = (Collection) o;
 
         return getId().equals(that.getId());
-    }
-
-    public static class Formula {
-
-        private String formulaString;
-        private int elementCount;
-
-        private static Formula fromProto(CollectorProtos.Collection.Formula protoFormula) {
-            Formula formula = new Formula();
-            formula.formulaString = protoFormula.getFormulaString();
-            formula.elementCount = protoFormula.getElementCount();
-            return formula;
-        }
-
-        private static Formula emptyFormula() {
-            Formula formula = new Formula();
-            formula.formulaString = "";
-            formula.elementCount = 0;
-            return formula;
-        }
-
-        public int getElementCount() {
-            return elementCount;
-        }
-
-        public boolean hasElement(int elementNumber) {
-            //TODO parse formula
-            return false;
-        }
-
-        public String getFormulaString() {
-            return formulaString;
-        }
     }
 }
