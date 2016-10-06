@@ -55,18 +55,18 @@ public class Parser {
     }
 
     private Node parseRange() throws InvalidFormulaException {
-        Node left = parseNumber();
+        NumberNode left = parseNumber();
         if (accept(Token.Type.UNTIL)) {
-            Node right = parseNumber();
+            NumberNode right = parseNumber();
             return new UntilOperator(left, right);
         } else {
             return left;
         }
     }
 
-    private Node parseNumber() throws InvalidFormulaException {
+    private NumberNode parseNumber() throws InvalidFormulaException {
         if (currentToken != null && currentToken.type == Token.Type.NUMBER) {
-            Node node = new NumberNode(((NumberToken) currentToken).number);
+            NumberNode node = new NumberNode(((NumberToken) currentToken).number);
             nextToken();
             return node;
         } else {

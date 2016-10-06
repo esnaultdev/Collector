@@ -30,13 +30,13 @@ public class Evaluator {
             AddOperator operator = (AddOperator) node;
             DiscontinuousRange left = evaluate(operator.left);
             DiscontinuousRange right = evaluate(operator.right);
-            return left.mergeWith(right);
+            return left.add(right);
 
         } else if (node instanceof RemoveOperator) {
             RemoveOperator operator = (RemoveOperator) node;
             DiscontinuousRange left = evaluate(operator.left);
             DiscontinuousRange right = evaluate(operator.right);
-            return left.removeFrom(right);
+            return left.remove(right);
 
         } else {
             throw new InvalidFormulaException("Unknown node: " + node);

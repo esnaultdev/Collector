@@ -8,7 +8,7 @@ import java.util.TreeMap;
 
 public class DiscontinuousRange {
 
-    private TreeMap<Integer, Integer> ranges;
+    private NavigableMap<Integer, Integer> ranges;
 
     public DiscontinuousRange() {
         ranges = new TreeMap<>();
@@ -19,23 +19,45 @@ public class DiscontinuousRange {
         ranges.put(range.first, range.last);
     }
 
-    public DiscontinuousRange mergeWith(@NonNull DiscontinuousRange other) {
+    public DiscontinuousRange add(@NonNull Range range) {
         //TODO
         return null;
     }
 
-    public DiscontinuousRange removeFrom(@NonNull DiscontinuousRange other) {
+    public DiscontinuousRange add(@NonNull DiscontinuousRange other) {
+        //TODO
+        return null;
+    }
+
+    public DiscontinuousRange remove(@NonNull Range other) {
+        //TODO
+        return null;
+    }
+
+    public DiscontinuousRange remove(@NonNull DiscontinuousRange other) {
         //TODO
         return null;
     }
 
     public boolean contains(int number) {
-        if (ranges.size() == 0) {
+        Map.Entry<Integer, Integer> floorRangeEntry = ranges.floorEntry(number);
+        if (floorRangeEntry == null) {
             return false;
         }
-        NavigableMap<Integer, Integer> lowerRanges = ranges.headMap(number, true);
-        Map.Entry<Integer, Integer> lastLowerRange = lowerRanges.lastEntry();
-        Range range = new Range(lastLowerRange.getKey(), lastLowerRange.getValue());
-        return range.contains(number);
+        Range floorRange = new Range(floorRangeEntry.getKey(), floorRangeEntry.getValue());
+        return floorRange.contains(number);
+    }
+
+    public boolean contains(@NonNull Range range) {
+        Map.Entry<Integer, Integer> floorRangeEntry = ranges.floorEntry(range.first);
+        if (floorRangeEntry == null) {
+            return false;
+        }
+        Range floorRange = new Range(floorRangeEntry.getKey(), floorRangeEntry.getValue());
+        return floorRange.contains(range.first) && floorRange.contains(range.last);
+    }
+
+    public int size() {
+        return 0;
     }
 }
