@@ -5,15 +5,21 @@ import android.text.TextUtils;
 
 import com.google.common.base.Preconditions;
 
-import java.util.ArrayList;
+import net.aohayou.collector.data.formula.evaluator.Evaluator;
+import net.aohayou.collector.data.formula.parser.Node;
+import net.aohayou.collector.data.formula.parser.Parser;
+import net.aohayou.collector.data.formula.tokenizer.Token;
+import net.aohayou.collector.data.formula.tokenizer.Tokenizer;
+
 import java.util.List;
 
 public class FormulaConverter {
 
-    public List<Range> convert(@NonNull String formulaString) throws InvalidFormulaException {
+    public DiscontinuousRange convert(@NonNull String formulaString)
+            throws InvalidFormulaException {
         Preconditions.checkArgument(!TextUtils.isEmpty(formulaString));
-
-
-        return new ArrayList<>();
+        List<Token> tokens = Tokenizer.tokenize(formulaString);
+        Node node = new Parser(tokens).parse();
+        return Evaluator.evaluate(node);
     }
 }
