@@ -142,6 +142,14 @@ public class FormulaConverter {
                 this.left = left;
                 this.right = right;
             }
+
+            @Override
+            public boolean equals(Object obj) {
+                if (obj == null) return false;
+                if (!(obj instanceof Operator)) return false;
+                Operator op = (Operator) obj;
+                return left.equals(op.left) && right.equals(op.right);
+            }
         }
 
         static final class AddOperator extends Operator {
@@ -168,6 +176,13 @@ public class FormulaConverter {
             public NumberNode(int value) {
                 this.value = value;
             }
+
+            @Override
+            public boolean equals(Object obj) {
+                if (obj == null) return false;
+                if (!(obj instanceof NumberNode)) return false;
+                return ((NumberNode) obj).value == value;
+            }
         }
 
         private final List<Tokenizer.Token> tokens;
@@ -188,15 +203,6 @@ public class FormulaConverter {
                 return true;
             }
             return false;
-        }
-
-        private boolean expect(Tokenizer.Token.Type tokenType) throws InvalidFormulaException {
-            if (accept(tokenType)) {
-                return true;
-            }
-            String currentTokenName = currentToken == null ? "null" : currentToken.type.name();
-            throw new InvalidFormulaException("Unexpected token: " + currentTokenName +
-                    ", " + tokenType.name() + " expected");
         }
 
         public Node parse() throws InvalidFormulaException {
@@ -234,13 +240,14 @@ public class FormulaConverter {
         }
 
         private Node parseNumber() throws InvalidFormulaException {
-            if (currentToken.type == Tokenizer.Token.Type.NUMBER) {
+            if (currentToken != null && currentToken.type == Tokenizer.Token.Type.NUMBER) {
                 Node node = new NumberNode(((Tokenizer.NumberToken) currentToken).number);
                 nextToken();
                 return node;
             } else {
+                String tokenName = currentToken == null ? "null" : currentToken.type.name();
                 throw new InvalidFormulaException(
-                        "Unexpected token: " + currentToken.type.name() + ", number expected");
+                        "Unexpected token: " + tokenName + ", number expected");
             }
         }
     }
