@@ -20,27 +20,58 @@ public class FormulaConverter {
     // Visible for testing
     static class Tokenizer {
 
-        static class Token {
+        static abstract class Token {
             enum Type {
-                NUMBER_LITERAL,
-                OPERATOR
+                ADD,
+                REMOVE,
+                UNTIL,
+                NUMBER
             }
 
-            public final Type type;
-            public final String value;
+            private final Type type;
 
-            public Token(@NonNull Type type, @NonNull String value) {
+            private Token(@NonNull Type type) {
                 this.type = type;
-                this.value = value;
             }
 
             @Override
-            public boolean equals(Object o) {
-                if (this == o) return true;
-                if (o == null || getClass() != o.getClass()) return false;
-                Token token = (Token) o;
+            public boolean equals(Object obj) {
+                if (obj == null) return false;
+                if (!(obj instanceof Token)) return false;
+                return ((Token) obj).type == type;
+            }
+        }
 
-                return value.equals(token.value) && type == token.type;
+        static final class AddToken extends Token {
+            public AddToken() {
+                super(Type.ADD);
+            }
+        }
+
+        static final class RemoveToken extends Token {
+            public RemoveToken() {
+                super(Type.REMOVE);
+            }
+        }
+
+        static final class UntilToken extends Token {
+            public UntilToken() {
+                super(Type.UNTIL);
+            }
+        }
+
+        static final class NumberToken extends Token {
+            public final int number;
+            public NumberToken(int number) {
+                super(Type.NUMBER);
+                this.number = number;
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                if (obj == null) return false;
+                if (!(obj instanceof NumberToken)) return false;
+                return ((NumberToken) obj).number == number;
             }
         }
 
@@ -70,12 +101,24 @@ public class FormulaConverter {
                         }
                     }
 
-                    tokens.add(new Token(Token.Type.NUMBER_LITERAL, builder.toString()));
+                    tokens.add(new NumberToken(Integer.parseInt(builder.toString())));
                     continue;
                 }
 
-                if (isOperator(currentChar)) {
-                    tokens.add(new Token(Token.Type.OPERATOR, String.valueOf(currentChar)));
+                if (currentChar == '+') {
+                    tokens.add(new AddToken());
+                    current++;
+                    continue;
+                }
+
+                if (currentChar == '-') {
+                    tokens.add(new RemoveToken());
+                    current++;
+                    continue;
+                }
+
+                if (currentChar == '*') {
+                    tokens.add(new UntilToken());
                     current++;
                     continue;
                 }
@@ -85,9 +128,120 @@ public class FormulaConverter {
 
             return tokens;
         }
+    }
 
-        private static boolean isOperator(char character) {
-            return character == '+' || character == '-' || character == '*';
+    static class Parser {
+
+        static abstract class Node {}
+
+        static abstract class Operator extends Node {
+            public final Node left;
+            public final Node right;
+
+            public Operator(@NonNull Node left, @NonNull Node right) {
+                this.left = left;
+                this.right = right;
+            }
+        }
+
+        static final class AddOperator extends Operator {
+            public AddOperator(@NonNull Node left, @NonNull Node right) {
+                super(left, right);
+            }
+        }
+
+        static final class RemoveOperator extends Operator {
+            public RemoveOperator(@NonNull Node left, @NonNull Node right) {
+                super(left, right);
+            }
+        }
+
+        static final class UntilOperator extends Operator {
+            public UntilOperator(@NonNull Node left, @NonNull Node right) {
+                super(left, right);
+            }
+        }
+
+        static final class NumberNode extends Node {
+            public final int value;
+
+            public NumberNode(int value) {
+                this.value = value;
+            }
+        }
+
+        private final List<Tokenizer.Token> tokens;
+        private Tokenizer.Token currentToken;
+        private int current = -1;
+
+        public Parser(List<Tokenizer.Token> tokens) {
+            this.tokens = Preconditions.checkNotNull(tokens);
+        }
+
+        private void nextToken() {
+            currentToken = (++current < tokens.size()) ? tokens.get(current) : null;
+        }
+
+        private boolean accept(Tokenizer.Token.Type tokenType) {
+            if (currentToken != null && currentToken.type == tokenType) {
+                nextToken();
+                return true;
+            }
+            return false;
+        }
+
+        private boolean expect(Tokenizer.Token.Type tokenType) throws InvalidFormulaException {
+            if (accept(tokenType)) {
+                return true;
+            }
+            String currentTokenName = currentToken == null ? "null" : currentToken.type.name();
+            throw new InvalidFormulaException("Unexpected token: " + currentTokenName +
+                    ", " + tokenType.name() + " expected");
+        }
+
+        public Node parse() throws InvalidFormulaException {
+            nextToken();
+            Node result = parseRangeOperations();
+            if (current < tokens.size()) {
+                throw new InvalidFormulaException("Unexpected token: " + currentToken.type.name());
+            }
+            return result;
+        }
+
+        private Node parseRangeOperations() throws InvalidFormulaException {
+            Node left = parseRange();
+            while (true) {
+                if (accept(Tokenizer.Token.Type.ADD)) {
+                    Node right = parseRange();
+                    left = new AddOperator(left, right);
+                } else if (accept(Tokenizer.Token.Type.REMOVE)) {
+                    Node right = parseRange();
+                    left = new RemoveOperator(left, right);
+                } else {
+                    return left;
+                }
+            }
+        }
+
+        private Node parseRange() throws InvalidFormulaException {
+            Node left = parseNumber();
+            if (accept(Tokenizer.Token.Type.UNTIL)) {
+                Node right = parseNumber();
+                return new UntilOperator(left, right);
+            } else {
+                return left;
+            }
+        }
+
+        private Node parseNumber() throws InvalidFormulaException {
+            if (currentToken.type == Tokenizer.Token.Type.NUMBER) {
+                Node node = new NumberNode(((Tokenizer.NumberToken) currentToken).number);
+                nextToken();
+                return node;
+            } else {
+                throw new InvalidFormulaException(
+                        "Unexpected token: " + currentToken.type.name() + ", number expected");
+            }
         }
     }
 }
