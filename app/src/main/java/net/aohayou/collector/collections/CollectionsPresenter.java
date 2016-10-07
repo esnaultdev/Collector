@@ -91,12 +91,13 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
     @Override
     public void onRename(@NonNull String newName) {
         Collection collection = collections.get(indexToUpdate);
-        dataSource.renameCollection(collection, newName);
+        collection = collection.setName(newName);
+        dataSource.saveCollection(collection);
 
         collections.remove(indexToUpdate);
         view.displayCollectionRemoved(indexToUpdate);
 
-        int newIndex = insertInOrder(collection.setName(newName));
+        int newIndex = insertInOrder(collection);
         view.displayCollectionAdded(newIndex);
 
         resetCollectionToUpdate();

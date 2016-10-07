@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,13 +13,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import net.aohayou.collector.R;
+import net.aohayou.collector.data.formula.Formula;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class CollectionDetailFragment extends Fragment implements CollectionDetailContract.View {
 
-    @BindView(R.id.entry_count) TextView entryCountView;
+    private static final String TAG_EDIT_FORMULA = "editFormula";
+
+    @BindView(R.id.formula_text_view) TextView formulaTextView;
     @BindView(R.id.toolbar) Toolbar toolbar;
 
     private CollectionDetailContract.Presenter presenter;
@@ -52,6 +56,18 @@ public class CollectionDetailFragment extends Fragment implements CollectionDeta
     public void onResume() {
         super.onResume();
         presenter.start();
+
+        bindDialogs();
+    }
+
+    private void bindDialogs() {
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        EditFormulaDialogFragment creationFragment;
+        creationFragment =
+                (EditFormulaDialogFragment) fragmentManager.findFragmentByTag(TAG_EDIT_FORMULA);
+        if (creationFragment != null) {
+            creationFragment.setDialogListener(getCreationDialogListener());
+        }
     }
 
     @Override
@@ -61,12 +77,21 @@ public class CollectionDetailFragment extends Fragment implements CollectionDeta
     }
 
     @Override
-    public void displayEntryCount(int entryCount) {
+    public void displayFormula(@NonNull Formula formula) {
+        displayElementCount(formula.getElementCount());
+        displayFormulaString(formula.getFormulaString());
+    }
+
+    private void displayElementCount(int count) {
         Resources res = getResources();
-        String itemsCount = res.getQuantityString(R.plurals.numberOfItems, entryCount, entryCount);
+        String countString = res.getQuantityString(R.plurals.numberOfItems, count, count);
         if (toolbar != null) {
-            toolbar.setSubtitle(itemsCount);
+            toolbar.setSubtitle(countString);
         }
+    }
+
+    private void displayFormulaString(@NonNull String formulaString) {
+        formulaTextView.setText("\"" + formulaString + "\"");
     }
 
     @Override
@@ -74,6 +99,28 @@ public class CollectionDetailFragment extends Fragment implements CollectionDeta
         if (toolbar != null) {
             toolbar.setTitle(collectionName);
         }
+    }
+
+    @Override
+    public void showEditFormulaDialog(@NonNull String oldFormulaString) {
+        EditFormulaDialogFragment editFormulaDialog;
+        editFormulaDialog = EditFormulaDialogFragment.getInstance(oldFormulaString);
+        editFormulaDialog.setDialogListener(getCreationDialogListener());
+        editFormulaDialog.show(getActivity().getSupportFragmentManager(), TAG_EDIT_FORMULA);
+    }
+
+    private EditFormulaDialogFragment.Listener getCreationDialogListener() {
+        return new EditFormulaDialogFragment.Listener() {
+            @Override
+            public void onCancel() {
+                presenter.onFormulaEditCancel();
+            }
+
+            @Override
+            public void onFormulaSet(@NonNull String newFormulaString) {
+                presenter.onFormulaEdit(newFormulaString);
+            }
+        };
     }
 
     @Override

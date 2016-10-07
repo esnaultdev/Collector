@@ -10,6 +10,7 @@
     <string name="create">Create</string>
     <string name="rename">Rename</string>
     <string name="delete">Delete</string>
+    <string name="set">Set</string>
 
     <string name="title_activity_collection_detail">Details</string>
     <plurals name="numberOfItems">
@@ -17,5 +18,7 @@
         <item quantity="one">%d element.</item>
         <item quantity="other">%d elements.</item>
     </plurals>
+
+    <string name="formula_string_hint">Formula</string>
 
 </resources>

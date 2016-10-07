@@ -7,25 +7,35 @@ import com.google.common.base.Preconditions;
 
 import net.aohayou.collector.data.CollectorProtos;
 
-public class Formula {
+import java.util.Date;
 
-    private static FormulaConverter converter = new FormulaConverter();
+public class Formula {
 
     private final String formulaString;
     private final int elementCount;
+    private final long creationDate;
 
     private DiscontinuousRange elements;
 
-    public Formula(@NonNull String formulaString, int elementCount) {
+    public Formula(@NonNull String formulaString, int elementCount, long creationDate) {
         this.formulaString = Preconditions.checkNotNull(formulaString);
         this.elementCount = elementCount;
+        this.creationDate = creationDate;
+    }
+
+    public Formula(@NonNull String formulaString, long creationDate) {
+        this.formulaString = Preconditions.checkNotNull(formulaString);
+        this.creationDate = creationDate;
+        convertFormula();
+        this.elementCount = elements.size();
     }
 
     public static Formula fromProto(CollectorProtos.Collection.Formula protoFormula) {
         int elementCount = protoFormula.getElementCount();
         if (elementCount != 0) {
             String formulaString = protoFormula.getFormulaString();
-            return new Formula(formulaString, elementCount);
+            long creationDate = protoFormula.getCreationDate();
+            return new Formula(formulaString, elementCount, creationDate);
         } else {
             return emptyFormula();
         }
@@ -48,7 +58,7 @@ public class Formula {
 
     private void convertFormula() {
         try {
-            elements = converter.convert(formulaString);
+            elements = FormulaConverter.convert(formulaString);
         } catch (InvalidFormulaException e) {
             Log.e("Formula", "Error converting formula: ", e);
             elements = new DiscontinuousRange();
@@ -59,13 +69,24 @@ public class Formula {
         return formulaString;
     }
 
+    public long getCreationDate() {
+        return creationDate;
+    }
+
+    public CollectorProtos.Collection.Formula toProto() {
+        return CollectorProtos.Collection.Formula.newBuilder()
+                .setFormulaString(formulaString)
+                .setCreationDate(creationDate)
+                .setElementCount(getElementCount())
+                .build();
+    }
 
     /**
      * A class representing a formula with no elements.
      */
     private static class EmptyFormula extends Formula {
         private EmptyFormula() {
-            super("", 0);
+            super("", 0, new Date().getTime());
         }
 
         @Override

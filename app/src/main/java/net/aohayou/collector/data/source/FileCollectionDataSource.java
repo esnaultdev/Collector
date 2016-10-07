@@ -70,7 +70,6 @@ public class FileCollectionDataSource implements CollectionDataSource {
                               @NonNull GetCollectionCallback callback) {
         checkState(isDataLoaded());
 
-
         Collection collection = collections.get(collectionId);
         if (collection == null) {
             callback.onDataNotAvailable();
@@ -102,26 +101,7 @@ public class FileCollectionDataSource implements CollectionDataSource {
     }
 
     @Override
-    public void renameCollection(@NonNull Collection collection, @NonNull String newName) {
-        renameCollection(collection.toProto(), newName);
-    }
-
-    @Override
-    public void renameCollection(@NonNull String collectionId, @NonNull String newName) {
-        renameCollection(collections.get(collectionId), newName);
-    }
-
-    private void renameCollection(@NonNull CollectorProtos.Collection collection,
-                                  @NonNull String newName) {
-        checkState(isDataLoaded());
-
-        CollectorProtos.Collection newProto = CollectorProtos.Collection.newBuilder(collection)
-                .setName(newName)
-                .build();
-        replaceCollection(Collection.fromProto(newProto));
-    }
-
-    private void replaceCollection(@NonNull Collection collection) {
+    public void saveCollection(@NonNull Collection collection) {
         collections.put(collection.getId(), collection);
         library = CollectorProtos.Library.newBuilder(library)
                 .removeCollection(getCollectionIndexById(collection.getId()))

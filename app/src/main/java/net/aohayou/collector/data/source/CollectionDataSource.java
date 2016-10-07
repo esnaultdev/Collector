@@ -30,9 +30,7 @@ public interface CollectionDataSource {
 
     void createCollection(@NonNull Collection collection);
 
-    void renameCollection(@NonNull Collection collection, @NonNull String newName);
-
-    void renameCollection(@NonNull String collectionId, @NonNull String newName);
+    void saveCollection(@NonNull Collection collection);
 
     void deleteCollection(@NonNull Collection collection);
 

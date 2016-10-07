@@ -7,7 +7,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="Item count"
-        android:id="@+id/entry_count"
+        tools:text="Formula"
+        android:id="@+id/formula_text_view"
         android:layout_gravity="center_horizontal" />
 </FrameLayout>

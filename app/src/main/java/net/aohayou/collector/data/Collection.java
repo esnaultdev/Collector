@@ -49,16 +49,24 @@ public class Collection {
         return fromProto(newProto);
     }
 
-    public CollectorProtos.Collection toProto() {
-        return protoCollection;
-    }
-
     public Formula getFormula() {
         if (protoCollection.hasFormula()) {
             return Formula.fromProto(protoCollection.getFormula());
         } else {
             return Formula.emptyFormula();
         }
+    }
+
+    public Collection setFormula(@NonNull Formula newFormula) {
+        Preconditions.checkNotNull(newFormula);
+        CollectorProtos.Collection newProto = protoCollection.toBuilder()
+                .setFormula(newFormula.toProto())
+                .build();
+        return fromProto(newProto);
+    }
+
+    public CollectorProtos.Collection toProto() {
+        return protoCollection;
     }
 
     @Override

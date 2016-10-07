@@ -12,6 +12,7 @@ message Collection {
     message Formula {
         int32 elementCount = 1;
         string formulaString = 2;
+        int64 creationDate = 3;
     }
 
     Formula formula = 3;
