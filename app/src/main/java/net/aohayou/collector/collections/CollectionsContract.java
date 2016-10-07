@@ -21,6 +21,8 @@ public interface CollectionsContract {
 
         void showCollectionDetails(@NonNull String collectionId);
 
+        void showCreateDialog();
+
         void showRenameDialog(@NonNull String collectionName);
 
         void showDeleteDialog();
@@ -32,7 +34,11 @@ public interface CollectionsContract {
 
         void openCollectionDetails(@NonNull Collection collection);
 
-        void addCollection(@NonNull String collectionName);
+        void onCreateRequest();
+
+        void onCreate(@NonNull String collectionName);
+
+        void onCreateCancel();
 
         void onRenameRequest(@NonNull Collection collection);
 

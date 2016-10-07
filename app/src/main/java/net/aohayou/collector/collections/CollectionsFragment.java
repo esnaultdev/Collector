@@ -24,6 +24,7 @@ import java.util.List;
  */
 public class CollectionsFragment extends Fragment implements CollectionsContract.View {
 
+    private static final String TAG_CREATE_COLLECTION = "createCollection";
     private static final String TAG_RENAME_COLLECTION = "renameCollection";
     private static final String TAG_DELETE_COLLECTION = "deleteCollection";
 
@@ -94,12 +95,21 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
 
     private void bindDialogs() {
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+
+        CreateRenameCollectionDialogFragment createFragment;
+        createFragment = (CreateRenameCollectionDialogFragment) fragmentManager
+                .findFragmentByTag(TAG_CREATE_COLLECTION);
+        if (createFragment != null) {
+            createFragment.setDialogListener(getCreationDialogListener());
+        }
+
         CreateRenameCollectionDialogFragment renameDialog;
         renameDialog = (CreateRenameCollectionDialogFragment) fragmentManager
                 .findFragmentByTag(TAG_RENAME_COLLECTION);
         if (renameDialog != null) {
             renameDialog.setDialogListener(getRenameDialogListener());
         }
+
         DeleteCollectionDialogFragment deleteDialog;
         deleteDialog = (DeleteCollectionDialogFragment) fragmentManager
                 .findFragmentByTag(TAG_DELETE_COLLECTION);
@@ -136,6 +146,28 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
     }
 
     @Override
+    public void showCreateDialog() {
+        CreateRenameCollectionDialogFragment creationDialog;
+        creationDialog = CreateRenameCollectionDialogFragment.getInstance();
+        creationDialog.setDialogListener(getCreationDialogListener());
+        creationDialog.show(getActivity().getSupportFragmentManager(), TAG_CREATE_COLLECTION);
+    }
+
+    private CreateRenameCollectionDialogFragment.CreateListener getCreationDialogListener() {
+        return new CreateRenameCollectionDialogFragment.CreateListener() {
+            @Override
+            public void onCollectionCreate(@NonNull String collectionName) {
+                presenter.onCreate(collectionName);
+            }
+
+            @Override
+            public void onCancel() {
+                presenter.onCreateCancel();
+            }
+        };
+    }
+
+    @Override
     public void showRenameDialog(@NonNull String collectionName) {
         CreateRenameCollectionDialogFragment renameDialog;
         renameDialog = CreateRenameCollectionDialogFragment.getInstance(collectionName);
@@ -154,7 +186,7 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
 
             @Override
             public void onCancel() {
-                // Do nothing
+                presenter.onRenameCancel();
             }
         };
     }
@@ -178,7 +210,7 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
 
             @Override
             public void onCancel() {
-                // Do nothing
+                presenter.onDeleteCancel();
             }
         };
     }

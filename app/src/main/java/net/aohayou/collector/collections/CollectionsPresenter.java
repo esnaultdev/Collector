@@ -69,12 +69,22 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
     }
 
     @Override
-    public void addCollection(@NonNull String collectionName) {
+    public void onCreateRequest() {
+        view.showCreateDialog();
+    }
+
+    @Override
+    public void onCreate(@NonNull String collectionName) {
         Collection collection  = Collection.createCollection(collectionName);
         dataSource.createCollection(collection);
         int newIndex = insertInOrder(collection);
 
         view.displayCollectionAdded(newIndex);
+    }
+
+    @Override
+    public void onCreateCancel() {
+        // Do nothing
     }
 
     @Override

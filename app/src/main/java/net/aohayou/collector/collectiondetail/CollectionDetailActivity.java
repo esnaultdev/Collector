@@ -58,7 +58,6 @@ public class CollectionDetailActivity extends AppCompatActivity {
         presenter = new CollectionDetailPresenter(collectionsFragment,
                 new FileCollectionDataSource(this), collectionId);
 
-        //TODO should be in the view
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
