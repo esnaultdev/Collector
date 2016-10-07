@@ -19,4 +19,15 @@ public class Range {
     public int size() {
         return last - first + 1;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Range range = (Range) o;
+
+        return first == range.first && last == range.last;
+
+    }
 }

@@ -20,6 +20,9 @@ public class DiscontinuousRangeTest {
         assertTrue(disRange.contains(range));
 
         assertEquals(disRange.size(), 5);
+
+        Range[] expected = {range};
+        assertArrayEquals(disRange.toRangeArray(), expected);
     }
 
     @Test
@@ -30,15 +33,8 @@ public class DiscontinuousRangeTest {
                 .add(range1)
                 .add(range2);
 
-        assertTrue(disRange.contains(range1));
-        assertTrue(disRange.contains(range2));
-
-        assertFalse(disRange.contains(3));
-        assertFalse(disRange.contains(4));
-        assertFalse(disRange.contains(-1));
-        assertFalse(disRange.contains(8));
-
-        assertEquals(disRange.size(), 6);
+        Range[] expected = {range1, range2};
+        assertArrayEquals(disRange.toRangeArray(), expected);
     }
 
     @Test
@@ -47,7 +43,8 @@ public class DiscontinuousRangeTest {
                 .add(new Range(2, 3))
                 .add(new Range(0, 6));
 
-        assertEquals(disRange.size(), 7);
+        Range[] expected = {new Range(0, 6)};
+        assertArrayEquals(disRange.toRangeArray(), expected);
     }
 
     @Test
@@ -56,15 +53,8 @@ public class DiscontinuousRangeTest {
                 .add(new Range(0, 10))
                 .remove(new Range(5, 7));
 
-        assertTrue(disRange.contains(new Range(0, 4)));
-        assertTrue(disRange.contains(new Range(8, 10)));
-        assertFalse(disRange.contains(5));
-        assertFalse(disRange.contains(6));
-        assertFalse(disRange.contains(7));
-        assertFalse(disRange.contains(-1));
-        assertFalse(disRange.contains(11));
-
-        assertEquals(disRange.size(), 8);
+        Range[] expected = {new Range(0, 4), new Range(8, 10)};
+        assertArrayEquals(disRange.toRangeArray(), expected);
     }
 
     @Test
@@ -73,18 +63,19 @@ public class DiscontinuousRangeTest {
                 .add(new Range(0, 3))
                 .remove(new Range(-2, 5));
 
-        assertFalse(disRange.contains(new Range(0, 3)));
-        assertEquals(disRange.size(), 0);
+        Range[] expected = {};
+        assertArrayEquals(disRange.toRangeArray(), expected);
     }
 
     @Test
     public void remove_before_add() throws Exception {
+        Range addRange = new Range(0, 3);
         DiscontinuousRange disRange = new DiscontinuousRange()
                 .remove(new Range(-2, 5))
-                .add(new Range(0, 3));
+                .add(addRange);
 
-        assertTrue(disRange.contains(new Range(0, 3)));
-        assertEquals(disRange.size(), 4);
+        Range[] expected = {addRange};
+        assertArrayEquals(disRange.toRangeArray(), expected);
     }
 
     @Test
@@ -99,14 +90,26 @@ public class DiscontinuousRangeTest {
 
         DiscontinuousRange disRange = disRange1.add(disRange2);
 
-        assertTrue(disRange.contains(new Range(0, 4)));
-        assertTrue(disRange.contains(new Range(7, 10)));
-        assertTrue(disRange.contains(new Range(12, 20)));
-        assertFalse(disRange.contains(5));
-        assertFalse(disRange.contains(6));
-        assertFalse(disRange.contains(11));
-
+        Range[] expected = {new Range(0, 4), new Range(7, 10), new Range(12, 20)};
+        assertArrayEquals(disRange.toRangeArray(), expected);
         assertEquals(disRange.size(), 18);
+    }
+
+    @Test
+    public void add_discontinuous_range_complete() throws Exception {
+        DiscontinuousRange disRange1 = new DiscontinuousRange()
+                .add(new Range(0, 20))
+                .add(new Range(30, 50));
+
+        DiscontinuousRange disRange2 = new DiscontinuousRange()
+                .add(new Range(10, 35))
+                .add(new Range(45, 60));
+
+        DiscontinuousRange disRange = disRange1.add(disRange2);
+
+        Range[] expected = {new Range(0, 60)};
+        assertArrayEquals(disRange.toRangeArray(), expected);
+        assertEquals(disRange.size(), 61);
     }
 
     @Test
@@ -122,13 +125,8 @@ public class DiscontinuousRangeTest {
 
         DiscontinuousRange disRange = disRange1.remove(disRange2);
 
-        assertTrue(disRange.contains(new Range(1, 3)));
-        assertTrue(disRange.contains(9));
-        assertFalse(disRange.contains(0));
-        assertFalse(disRange.contains(4));
-        assertFalse(disRange.contains(8));
-        assertFalse(disRange.contains(10));
-
+        Range[] expected = {new Range(1, 3), new Range(9, 9)};
+        assertArrayEquals(disRange.toRangeArray(), expected);
         assertEquals(disRange.size(), 4);
     }
 }
