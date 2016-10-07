@@ -38,19 +38,11 @@ public class DiscontinuousRange {
     }
 
     public DiscontinuousRange remove(@NonNull Range other) {
-        return remove(toRangeArray(), new Range[]{other});
+        return Remover.remove(toRangeArray(), new Range[] {other});
     }
 
     public DiscontinuousRange remove(@NonNull DiscontinuousRange other) {
-        return remove(toRangeArray(), other.toRangeArray());
-    }
-
-    private static DiscontinuousRange remove(@NonNull Range[] left, @NonNull Range[] right) {
-        List<Range> result = new LinkedList<>();
-
-        //TODO
-
-        return new DiscontinuousRange(toRangeArray(result));
+        return Remover.remove(toRangeArray(), other.toRangeArray());
     }
 
     private static Range[] toRangeArray(@NonNull List<Range> list) {
@@ -91,6 +83,9 @@ public class DiscontinuousRange {
         return result;
     }
 
+    /**
+     * Utility class performing a merge of two discontinuous ranges.
+     */
     private static class Merger {
 
         private final Range[] left;
@@ -196,6 +191,91 @@ public class DiscontinuousRange {
             } else {
                 result.add(range);
             }
+        }
+    }
+
+    /**
+     * Utility class performing a removal of a discontinuous range from another.
+     * This could be a static method of {@link DiscontinuousRange} but is kept in a static class
+     * to match the {@link Merger} behaviour.
+     */
+    private static class Remover {
+
+        public static DiscontinuousRange remove(@NonNull Range[] left, @NonNull Range[] right) {
+            List<Range> result = new LinkedList<>();
+            int indexLeft = 0;
+            int indexRight = 0;
+            Range currentLeft;
+            Range currentRight;
+
+            while (indexLeft < left.length && indexRight < right.length) {
+                currentLeft = left[indexLeft];
+                currentRight = right[indexRight];
+
+                if (currentLeft.last < currentRight.first) {
+                    //  [   left   ]
+                    //                   [   right   ]
+                    result.add(currentLeft);
+                    indexLeft++;
+                } else if (currentRight.last < currentLeft.first) {
+                    //                   [   left   ]
+                    //  [   right   ]
+                    //  Nothing to remove
+                    indexRight++;
+                } else if (currentLeft.first <= currentRight.first
+                        && currentLeft.last >= currentRight.last) {
+                    //  [           left            ]
+                    //       [  right  ]
+                    //
+                    // We can't only add left - right and increment both sides, or we will miss
+                    // a removal in the following case:
+                    //  [           left            ]
+                    //       [  right  ]     [  nextRight  ]
+                    //
+                    // We need to only add the part of left before right, the other part will be
+                    // processed in the next iteration of the loop
+                    //  [add]           [  nextLeft  ]
+                    //       [  right  ]     [  nextRight  ]
+                    if (currentLeft.first != currentRight.first) {
+                        result.add(new Range(currentLeft.first, currentRight.first - 1));
+                    }
+                    if (currentLeft.last != currentRight.last) {
+                        left[indexLeft] = new Range(currentRight.last + 1, currentLeft.last);
+                    } else {
+                        indexLeft++;
+                    }
+                    indexRight++;
+                } else if (currentRight.first <= currentLeft.first
+                        && currentRight.last >= currentLeft.last) {
+                    //      [  left  ]
+                    //  [        right         ]
+                    indexLeft++;
+                } else if (currentLeft.first <= currentRight.first
+                        && currentLeft.last < currentRight.last) {
+                    //  [       left       ]
+                    //            [       right       ]
+                    if (currentLeft.first != currentRight.first) {
+                        result.add(new Range(currentLeft.first, currentRight.first - 1));
+                    }
+                    indexLeft++;
+                } else if (currentRight.first <= currentLeft.first
+                        && currentRight.last < currentLeft.last) {
+                    //            [       left       ]
+                    //  [       right       ]
+                    // We might also miss a removal, we only resize the left range
+                    left[indexLeft] = new Range(currentRight.last + 1, currentLeft.last);
+                    indexRight++;
+                }
+            }
+
+            if (indexRight == right.length) {
+                while (indexLeft < left.length) {
+                    result.add(left[indexLeft]);
+                    indexLeft++;
+                }
+            }
+
+            return new DiscontinuousRange(toRangeArray(result));
         }
     }
 }

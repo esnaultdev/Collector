@@ -58,6 +58,17 @@ public class DiscontinuousRangeTest {
     }
 
     @Test
+    public void remove_same() throws Exception {
+        Range range = new Range(0, 10);
+        DiscontinuousRange disRange = new DiscontinuousRange()
+                .add(range)
+                .remove(range);
+
+        Range[] expected = {};
+        assertArrayEquals(disRange.toRangeArray(), expected);
+    }
+
+    @Test
     public void remove_all() throws Exception {
         DiscontinuousRange disRange = new DiscontinuousRange()
                 .add(new Range(0, 3))
@@ -115,18 +126,27 @@ public class DiscontinuousRangeTest {
     @Test
     public void remove_discontinuous_range() throws Exception {
         DiscontinuousRange disRange1 = new DiscontinuousRange()
-                .add(new Range(0, 5))
-                .add(new Range(7, 10));
+                .add(new Range(10, 15))
+                .add(new Range(30, 50))
+                .add(new Range(55, 60))
+                .add(new Range(70, 100));
 
         DiscontinuousRange disRange2 = new DiscontinuousRange()
-                .add(new Range(-2, 0))
-                .add(new Range(4, 8))
-                .add(new Range(10, 20));
+                .add(new Range(0, 5))
+                .add(new Range(20, 30))
+                .add(new Range(35, 40))
+                .add(new Range(45, 75))
+                .add(new Range(95, 105))
+                .add(new Range(110, 120));
 
         DiscontinuousRange disRange = disRange1.remove(disRange2);
 
-        Range[] expected = {new Range(1, 3), new Range(9, 9)};
+        Range[] expected = {
+                new Range(10, 15),
+                new Range(31, 34),
+                new Range(41, 44),
+                new Range(76, 94)
+        };
         assertArrayEquals(disRange.toRangeArray(), expected);
-        assertEquals(disRange.size(), 4);
     }
 }
