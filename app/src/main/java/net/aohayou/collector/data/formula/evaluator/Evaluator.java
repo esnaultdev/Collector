@@ -38,6 +38,8 @@ public class Evaluator {
             DiscontinuousRange right = evaluate(operator.right);
             return left.remove(right);
 
+        } else if (node == null) {
+            return new DiscontinuousRange();
         } else {
             throw new InvalidFormulaException("Unknown node: " + node);
         }

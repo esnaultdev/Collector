@@ -31,6 +31,9 @@ public class Parser {
     }
 
     public Node parse() throws InvalidFormulaException {
+        if (tokens.isEmpty()) {
+            return null;
+        }
         nextToken();
         Node result = parseRangeOperations();
         if (current < tokens.size()) {

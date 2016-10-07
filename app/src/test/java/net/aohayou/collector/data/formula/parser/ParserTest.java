@@ -28,11 +28,19 @@ public class ParserTest {
     }
 
     @Test
-    public void parser_simple_expression() throws Exception {
+    public void parser_simple_formula() throws Exception {
         List<Token> tokens = Arrays.asList(expectedTokensSimpleFormula());
         Parser parser = new Parser(tokens);
         Node result = parser.parse();
         assertEquals(result, expectedNodesSimpleFormula());
+    }
+
+    @Test
+    public void parser_empty_formula() throws Exception {
+        List<Token> tokens = new ArrayList<>();
+        Parser parser = new Parser(tokens);
+        Node result = parser.parse();
+        assertEquals(result, null);
     }
 
     @Test (expected = InvalidFormulaException.class)

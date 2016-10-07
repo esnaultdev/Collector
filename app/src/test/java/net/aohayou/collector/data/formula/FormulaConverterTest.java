@@ -12,4 +12,10 @@ public class FormulaConverterTest {
         DiscontinuousRange disRange = FormulaConverter.convert(simpleFormula());
         assertArrayEquals(disRange.toRangeArray(), expectedRangesSimpleFormula());
     }
+
+    @Test
+    public void empty_formula() throws Exception {
+        DiscontinuousRange disRange = FormulaConverter.convert("");
+        assertArrayEquals(disRange.toRangeArray(), new Range[]{});
+    }
 }

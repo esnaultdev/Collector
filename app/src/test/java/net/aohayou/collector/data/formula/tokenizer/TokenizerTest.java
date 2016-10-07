@@ -12,28 +12,34 @@ import static org.junit.Assert.*;
 public class TokenizerTest {
 
     @Test
-    public void tokenizer_single_number() throws Exception {
+    public void single_number() throws Exception {
         List<Token> tokens = Tokenizer.tokenize("123");
         Token[] expected = {new NumberToken(123)};
         assertArrayEquals(expected, tokens.toArray());
     }
 
     @Test
-    public void tokenizer_simple_formula() throws Exception {
+    public void simple_formula() throws Exception {
         List<Token> tokens = Tokenizer.tokenize(simpleFormula());
         Token[] expected = expectedTokensSimpleFormula();
         assertArrayEquals(expected, tokens.toArray());
     }
 
     @Test
-    public void tokenizer_whitespace_simple_formula() throws Exception {
+    public void whitespace_simple_formula() throws Exception {
         List<Token> tokens = Tokenizer.tokenize(simpleFormulaWithSpaces());
         Token[] expected = expectedTokensSimpleFormula();
         assertArrayEquals(expected, tokens.toArray());
     }
 
+    @Test
+    public void empty_formula() throws Exception {
+        List<Token> tokens = Tokenizer.tokenize("");
+        assertArrayEquals(new Token[]{}, tokens.toArray());
+    }
+
     @Test(expected = InvalidFormulaException.class)
-    public void tokenizer_unknown_character() throws Exception {
+    public void unknown_character() throws Exception {
         Tokenizer.tokenize("1+2*a4-3");
     }
 }
