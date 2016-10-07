@@ -50,4 +50,12 @@ public abstract class FormulaConverterTestConstants {
                 new NumberNode(3)
         );
     }
+
+    public static Range[] expectedRangesSimpleFormula() {
+        Range[] expected = {
+                new Range(1, 2),
+                new Range(4, 4)
+        };
+        return expected;
+    }
 }

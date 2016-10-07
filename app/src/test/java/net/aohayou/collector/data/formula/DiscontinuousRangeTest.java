@@ -48,6 +48,16 @@ public class DiscontinuousRangeTest {
     }
 
     @Test
+    public void add_continuous() throws Exception {
+        DiscontinuousRange disRange = new DiscontinuousRange()
+                .add(new Range(0, 3))
+                .add(new Range(4, 6));
+
+        Range[] expected = {new Range(0, 6)};
+        assertArrayEquals(disRange.toRangeArray(), expected);
+    }
+
+    @Test
     public void remove() throws Exception {
         DiscontinuousRange disRange = new DiscontinuousRange()
                 .add(new Range(0, 10))

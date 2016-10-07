@@ -185,12 +185,16 @@ public class DiscontinuousRange {
         /** Add the range to the result, appending it to the last range if possible */
         private void addRangeToResult(@NonNull Range range) {
             Range lastRange = result.peekLast();
-            if (lastRange != null && range.first == lastRange.last) {
+            if (lastRange != null && canAppend(lastRange, range)) {
                 result.removeLast();
                 result.add(new Range(lastRange.first, range.last));
             } else {
                 result.add(range);
             }
+        }
+
+        private static boolean canAppend(@NonNull Range left, @NonNull Range right) {
+            return left.last == right.first || left.last == right.first - 1;
         }
     }
 

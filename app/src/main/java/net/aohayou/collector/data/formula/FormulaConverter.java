@@ -1,7 +1,6 @@
 package net.aohayou.collector.data.formula;
 
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
 
 import com.google.common.base.Preconditions;
 
@@ -15,9 +14,9 @@ import java.util.List;
 
 public class FormulaConverter {
 
-    public DiscontinuousRange convert(@NonNull String formulaString)
+    public static DiscontinuousRange convert(@NonNull String formulaString)
             throws InvalidFormulaException {
-        Preconditions.checkArgument(!TextUtils.isEmpty(formulaString));
+        Preconditions.checkNotNull(formulaString);
         List<Token> tokens = Tokenizer.tokenize(formulaString);
         Node node = new Parser(tokens).parse();
         return Evaluator.evaluate(node);
