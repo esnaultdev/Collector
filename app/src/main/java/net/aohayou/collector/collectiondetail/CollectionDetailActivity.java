@@ -56,7 +56,8 @@ public class CollectionDetailActivity extends AppCompatActivity {
 
         // Setup the presenter
         presenter = new CollectionDetailPresenter(collectionsFragment,
-                new FileCollectionDataSource(this), collectionId);
+                FileCollectionDataSource.getInstance(getApplicationContext()),
+                collectionId);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

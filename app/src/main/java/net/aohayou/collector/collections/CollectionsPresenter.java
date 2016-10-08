@@ -29,8 +29,6 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
         this.view = view;
         view.setPresenter(this);
         this.dataSource = dataSource;
-
-        dataSource.load();
         loadSavedState(savedState);
 
         comparator = new Comparator<Collection>() {
@@ -43,6 +41,9 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
 
     @Override
     public void start() {
+        if (!dataSource.isDataLoaded()) {
+            dataSource.load();
+        }
         loadCollections();
     }
 

@@ -10,6 +10,8 @@ public interface CollectionDataSource {
 
     void load();
 
+    boolean isDataLoaded();
+
     interface GetCollectionCallback {
 
         void onCollectionLoaded(@NonNull Collection collection);

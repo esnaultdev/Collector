@@ -25,11 +25,19 @@ public class FileCollectionDataSource implements CollectionDataSource {
     private CollectorProtos.Library library;
     private Map<String, Collection> collections;
 
+    private static FileCollectionDataSource instance;
     private final Context context;
     private boolean loaded = false;
 
-    public FileCollectionDataSource(Context context) {
+    private FileCollectionDataSource(Context context) {
         this.context = context;
+    }
+
+    public static FileCollectionDataSource getInstance(Context context) {
+        if (instance == null) {
+            instance = new FileCollectionDataSource(context);
+        }
+        return instance;
     }
 
     @Override
@@ -37,6 +45,11 @@ public class FileCollectionDataSource implements CollectionDataSource {
         loadLibrary();
         convertCollections();
         loaded = true;
+    }
+
+    @Override
+    public boolean isDataLoaded() {
+        return loaded;
     }
 
     private void loadLibrary() {
@@ -59,10 +72,6 @@ public class FileCollectionDataSource implements CollectionDataSource {
             Collection collection = Collection.fromProto(collectionProto);
             collections.put(collection.getId(), collection);
         }
-    }
-
-    private boolean isDataLoaded() {
-        return loaded;
     }
 
     @Override

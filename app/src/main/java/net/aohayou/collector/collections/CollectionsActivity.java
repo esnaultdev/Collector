@@ -43,7 +43,7 @@ public class CollectionsActivity extends AppCompatActivity {
 
         // Setup the presenter
         presenter = new CollectionsPresenter(collectionsFragment,
-                new FileCollectionDataSource(this),
+                FileCollectionDataSource.getInstance(getApplicationContext()),
                 savedInstanceState);
 
         fab.setOnClickListener(new View.OnClickListener() {

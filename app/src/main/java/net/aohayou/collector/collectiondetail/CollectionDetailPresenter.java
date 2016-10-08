@@ -27,12 +27,14 @@ public class CollectionDetailPresenter implements CollectionDetailContract.Prese
 
     @Override
     public void start() {
+        if (!dataSource.isDataLoaded()) {
+            dataSource.load();
+        }
         loadCollection();
     }
 
     @Override
     public void loadCollection() {
-        dataSource.load();
         dataSource.getCollection(collectionId, new CollectionDataSource.GetCollectionCallback() {
             @Override
             public void onCollectionLoaded(@NonNull Collection collection) {
