@@ -14,9 +14,8 @@
 
     <string name="title_activity_collection_detail">Details</string>
     <plurals name="numberOfItems">
-        <item quantity="zero">No elements.</item>
-        <item quantity="one">%d element.</item>
-        <item quantity="other">%d elements.</item>
+        <item quantity="one">%d element</item>
+        <item quantity="other">%d elements</item>
     </plurals>
 
     <string name="formula_string_hint">Formula</string>

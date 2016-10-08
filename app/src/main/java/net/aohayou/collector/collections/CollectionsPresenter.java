@@ -34,7 +34,7 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
         comparator = new Comparator<Collection>() {
             @Override
             public int compare(Collection c1, Collection c2) {
-                return c1.getName().compareTo(c2.getName());
+                return c1.getName().compareToIgnoreCase(c2.getName());
             }
         };
     }

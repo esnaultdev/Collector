@@ -1,5 +1,6 @@
 package net.aohayou.collector.collections;
 
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
@@ -60,6 +61,11 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.item = values.get(position);
         holder.nameView.setText(values.get(position).getName());
+
+        Resources res = holder.view.getResources();
+        int count = values.get(position).getFormula().getElementCount();
+        String countString = res.getQuantityString(R.plurals.numberOfItems, count, count);
+        holder.countView.setText(countString);
     }
 
     @Override
@@ -70,12 +76,14 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View view;
         @BindView(R.id.collection_name) TextView nameView;
+        @BindView(R.id.element_count) TextView countView;
         public Collection item;
 
         public ViewHolder(View view) {
             super(view);
             this.view = view;
             ButterKnife.bind(this, view);
+
             view.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
                 @Override
                 public void onCreateContextMenu(ContextMenu menu, View v,

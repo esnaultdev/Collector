@@ -2,4 +2,8 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="material_component_lists_dense_two_line_text_size">13sp</dimen>
+    <dimen name="material_component_lists_dense_two_line_height">60dp</dimen>
+    <dimen name="material_component_lists_dense_padding_above_list">4dp</dimen>
 </resources>
