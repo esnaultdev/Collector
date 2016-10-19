@@ -6,7 +6,7 @@
     android:name="net.aohayou.collector.CollectionFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="@dimen/material_component_lists_dense_padding_above_list"
+    android:paddingTop="@dimen/material_list_dense_padding_vertical"
     android:clipToPadding="false"
     app:layoutManager="LinearLayoutManager"
     tools:context=".collections.CollectionsFragment"

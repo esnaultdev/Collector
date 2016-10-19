@@ -4,9 +4,9 @@
     android:id="@+id/formula_string_input_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="@dimen/material_component_dialogs_padding_between_title_and_body_text"
-    android:paddingStart="@dimen/material_component_dialogs_padding_around_content_area"
-    android:paddingEnd="@dimen/material_component_dialogs_padding_around_content_area" >
+    android:paddingTop="@dimen/material_dialog_content_area_title_content_margin"
+    android:paddingStart="@dimen/material_dialog_content_area_padding_horizontal"
+    android:paddingEnd="@dimen/material_dialog_content_area_padding_horizontal" >
 
     <android.support.design.widget.TextInputEditText
         android:id="@+id/formula_string_input_text"
