@@ -36,7 +36,7 @@ public class FormulaElementView extends View {
 
     private void init() {
         if (colorPaint == null) {
-            int colorResource = blue.aodev.materialspecs.R.color.material_color_green_primary;
+            int colorResource = blue.aodev.materialvalues.R.color.material_color_green_primary;
             colorPaint = new Paint();
             colorPaint.setColor(getContext().getResources().getColor(colorResource));
         }
