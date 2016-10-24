@@ -56,6 +56,13 @@ public class Formula {
         return elements.contains(elementNumber);
     }
 
+    public int getLastElement() {
+        if (elements == null) {
+            convertFormula(); // Lazy conversion
+        }
+        return elements.getLastElement();
+    }
+
     private void convertFormula() {
         try {
             elements = FormulaConverter.convert(formulaString);
@@ -92,6 +99,11 @@ public class Formula {
         @Override
         public boolean hasElement(int elementNumber) {
             return false;
+        }
+
+        @Override
+        public int getLastElement() {
+            return 0;
         }
     }
 }

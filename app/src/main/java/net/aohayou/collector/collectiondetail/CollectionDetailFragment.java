@@ -1,18 +1,21 @@
 package net.aohayou.collector.collectiondetail;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import net.aohayou.collector.R;
+import net.aohayou.collector.collectiondetail.view.FormulaAdapter;
 import net.aohayou.collector.data.formula.Formula;
 
 import butterknife.BindView;
@@ -22,8 +25,8 @@ public class CollectionDetailFragment extends Fragment implements CollectionDeta
 
     private static final String TAG_EDIT_FORMULA = "editFormula";
 
-    @BindView(R.id.formula_text_view) TextView formulaTextView;
     @BindView(R.id.toolbar) Toolbar toolbar;
+    private FormulaAdapter formulaAdapter;
 
     private CollectionDetailContract.Presenter presenter;
 
@@ -43,13 +46,24 @@ public class CollectionDetailFragment extends Fragment implements CollectionDeta
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        formulaAdapter = new FormulaAdapter();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_collection_detail, container, false);
+        View view = inflater.inflate(R.layout.fragment_collection_detail, container, false);
+
+        // Set the adapter
+        if (view instanceof RecyclerView) {
+            Context context = view.getContext();
+            RecyclerView formulaRecyclerView = (RecyclerView) view;
+            formulaRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+            formulaRecyclerView.setAdapter(formulaAdapter);
+        }
+
+        return view;
     }
 
     @Override
@@ -79,7 +93,7 @@ public class CollectionDetailFragment extends Fragment implements CollectionDeta
     @Override
     public void displayFormula(@NonNull Formula formula) {
         displayElementCount(formula.getElementCount());
-        displayFormulaString(formula.getFormulaString());
+        displayElements(formula);
     }
 
     private void displayElementCount(int count) {
@@ -90,8 +104,8 @@ public class CollectionDetailFragment extends Fragment implements CollectionDeta
         }
     }
 
-    private void displayFormulaString(@NonNull String formulaString) {
-        formulaTextView.setText("\"" + formulaString + "\"");
+    private void displayElements(@NonNull Formula formula) {
+        formulaAdapter.replaceData(formula);
     }
 
     @Override

@@ -68,6 +68,10 @@ public class DiscontinuousRange {
         return floorRange.contains(range.first) && floorRange.contains(range.last);
     }
 
+    public int getLastElement() {
+        return ranges.lastEntry().getValue();
+    }
+
     public int size() {
         return elementCount;
     }
