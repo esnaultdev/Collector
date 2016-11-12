@@ -10,7 +10,8 @@ import android.view.View;
 
 
 public class FormulaElementView extends View {
-    private static Paint colorPaint;
+    private static Paint acquiredPaint;
+    private static Paint missingPaint;
     private boolean acquired;
 
     public FormulaElementView(Context context) {
@@ -35,19 +36,23 @@ public class FormulaElementView extends View {
     }
 
     private void init() {
-        if (colorPaint == null) {
-            int colorResource = blue.aodev.materialvalues.R.color.material_color_green_primary;
-            colorPaint = new Paint();
-            colorPaint.setColor(getContext().getResources().getColor(colorResource));
+        if (acquiredPaint == null) {
+            int colorResource = material.values.R.color.material_color_green_primary;
+            acquiredPaint = new Paint();
+            acquiredPaint.setColor(getContext().getResources().getColor(colorResource));
+        }
+        if (missingPaint == null) {
+            int colorResource = material.values.R.color.material_color_grey_300;
+            missingPaint = new Paint();
+            missingPaint.setColor(getContext().getResources().getColor(colorResource));
         }
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (acquired) {
-            canvas.drawRect(0, 0, getWidth(), getHeight(), colorPaint);
-        }
+        Paint paint = acquired ? acquiredPaint : missingPaint;
+        canvas.drawRect(0, 0, getWidth(), getHeight(), paint);
     }
 
     public void setAcquired(boolean acquired) {
