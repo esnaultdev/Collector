@@ -55,10 +55,11 @@ public class CollectionDetailFragment extends Fragment implements CollectionDeta
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_collection_detail, container, false);
 
+        View recyclerView = view.findViewById(R.id.list);
         // Set the adapter
-        if (view instanceof RecyclerView) {
+        if (recyclerView instanceof RecyclerView) {
             Context context = view.getContext();
-            RecyclerView formulaRecyclerView = (RecyclerView) view;
+            RecyclerView formulaRecyclerView = (RecyclerView) recyclerView;
             formulaRecyclerView.setLayoutManager(new LinearLayoutManager(context));
             formulaRecyclerView.setAdapter(formulaAdapter);
         }
