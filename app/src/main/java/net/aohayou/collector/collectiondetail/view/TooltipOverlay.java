@@ -28,8 +28,8 @@ public class TooltipOverlay extends RelativeLayout {
 
     public void init() {
         LayoutInflater inflater = LayoutInflater.from(getContext());
-        tooltip = (ElementTooltip) inflater.inflate(R.layout.element_tooltip, this, true);
+        tooltip = (ElementTooltip) inflater.inflate(R.layout.element_tooltip, this, false);
         addView(tooltip);
-        //tooltip.setVisibility(INVISIBLE);
+        tooltip.setVisibility(INVISIBLE);
     }
 }

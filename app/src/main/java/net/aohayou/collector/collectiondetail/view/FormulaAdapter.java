@@ -1,8 +1,10 @@
 package net.aohayou.collector.collectiondetail.view;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import net.aohayou.collector.R;
@@ -13,47 +15,46 @@ import net.aohayou.collector.data.formula.Formula;
  */
 public class FormulaAdapter extends RecyclerView.Adapter<FormulaAdapter.ViewHolder> {
 
-    private Formula formula;
-    private int rowCount = -1;
-    private int columns = 8;
-
-    public FormulaAdapter() {
-        this.formula = null;
+    public interface Listener {
+        void onElementClicked(int elementNumber, @NonNull View elementView);
     }
 
-    public FormulaAdapter(@Nullable Formula formula) {
+    private Formula formula;
+    private Listener listener;
+
+    private int elementCount = -1;
+
+    public FormulaAdapter() {
+        this(null, null);
+    }
+
+    public FormulaAdapter(@Nullable Formula formula, @Nullable Listener listener) {
         this.formula = formula;
+        this.listener = listener;
     }
 
     public void replaceData(@Nullable Formula formula) {
         this.formula = formula;
-        rowCount = -1;
+        elementCount = -1;
         notifyDataSetChanged();
+    }
+
+    public void setListener(@Nullable Listener listener) {
+        this.listener = listener;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // Inflate view
-        FormulaRowView view = (FormulaRowView) LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.formula_row_view, parent, false);
+        FormulaElementView view = (FormulaElementView) LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.formula_element_view, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        // position = row number
-        int displayCount = columns;
-        if (position == getItemCount() - 1) {
-            //TODO check the displayCount
-        }
-        boolean acquired[] = new boolean[displayCount];
-        for (int i = 0; i < displayCount; i++) {
-            acquired[i] = formula.hasElement(position*columns + i + 1);
-        }
-        FormulaRowView.RowInfo info = new FormulaRowView.RowInfo(columns, displayCount, acquired);
+        boolean acquired = formula.hasElement(position + 1);
 
-        holder.info = info;
-        holder.view.setRowInfo(info);
+        holder.view.setAcquired(acquired);
     }
 
     @Override
@@ -61,19 +62,21 @@ public class FormulaAdapter extends RecyclerView.Adapter<FormulaAdapter.ViewHold
         if (formula == null) {
             return 0;
         }
-        if (rowCount == -1) {
-            rowCount = (formula.getLastElement() / columns) + 1;
+        if (elementCount == -1) {
+            // avoid getting the formula's last element multiple times
+            elementCount = formula.getLastElement();
         }
-        return rowCount;
+        return elementCount;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final FormulaRowView view;
-        public FormulaRowView.RowInfo info;
+        public final FormulaElementView view;
 
-        public ViewHolder(FormulaRowView view) {
+        public ViewHolder(FormulaElementView view) {
             super(view);
             this.view = view;
+
+            //TODO setup listener
         }
     }
 }
