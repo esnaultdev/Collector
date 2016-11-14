@@ -16,6 +16,8 @@ import android.view.ViewGroup;
 
 import net.aohayou.collector.R;
 import net.aohayou.collector.collectiondetail.view.FormulaAdapter;
+import net.aohayou.collector.collectiondetail.view.FormulaElementView;
+import net.aohayou.collector.collectiondetail.view.TooltipOverlay;
 import net.aohayou.collector.data.formula.Formula;
 
 import butterknife.BindView;
@@ -27,6 +29,7 @@ public class CollectionDetailFragment extends Fragment implements CollectionDeta
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     private FormulaAdapter formulaAdapter;
+    private TooltipOverlay tooltipOverlay;
 
     private CollectionDetailContract.Presenter presenter;
 
@@ -55,16 +58,20 @@ public class CollectionDetailFragment extends Fragment implements CollectionDeta
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_collection_detail, container, false);
 
-        View recyclerView = view.findViewById(R.id.list);
-        // Set the adapter
-        if (recyclerView instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView formulaRecyclerView = (RecyclerView) recyclerView;
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
+        tooltipOverlay = (TooltipOverlay) view.findViewById(R.id.overlay);
 
-            GridLayoutManager layoutManager = new GridLayoutManager(context, 8);
-            formulaRecyclerView.setLayoutManager(layoutManager);
-            formulaRecyclerView.setAdapter(formulaAdapter);
-        }
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 8);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(formulaAdapter);
+
+        formulaAdapter.setListener(new FormulaAdapter.Listener() {
+            @Override
+            public void onElementClicked(int elementNumber,
+                                         @NonNull FormulaElementView elementView) {
+                tooltipOverlay.displayTooltip(elementView, String.valueOf(elementNumber));
+            }
+        });
 
         return view;
     }

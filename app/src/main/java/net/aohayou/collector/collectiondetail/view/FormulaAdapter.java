@@ -16,7 +16,7 @@ import net.aohayou.collector.data.formula.Formula;
 public class FormulaAdapter extends RecyclerView.Adapter<FormulaAdapter.ViewHolder> {
 
     public interface Listener {
-        void onElementClicked(int elementNumber, @NonNull View elementView);
+        void onElementClicked(int elementNumber, @NonNull FormulaElementView elementView);
     }
 
     private Formula formula;
@@ -76,7 +76,14 @@ public class FormulaAdapter extends RecyclerView.Adapter<FormulaAdapter.ViewHold
             super(view);
             this.view = view;
 
-            //TODO setup listener
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null) {
+                        listener.onElementClicked(getAdapterPosition(), ViewHolder.this.view);
+                    }
+                }
+            });
         }
     }
 }

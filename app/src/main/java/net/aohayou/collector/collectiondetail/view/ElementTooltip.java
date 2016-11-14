@@ -83,7 +83,7 @@ public class ElementTooltip extends View {
     private void initPaint() {
         backgroundPaint = new Paint();
         backgroundPaint.setColor(getResources().getColor(
-                material.values.R.color.material_color_red_accent));
+                material.values.R.color.material_color_green_primary));
         backgroundPaint.setStyle(Paint.Style.FILL);
         backgroundPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
     }
@@ -140,9 +140,7 @@ public class ElementTooltip extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            setOutlineProvider(new TooltipOutline());
-        }
+        setOutlineProvider(new TooltipOutline());
     }
 
     @Override
@@ -152,9 +150,7 @@ public class ElementTooltip extends View {
         canvas.drawPath(path, backgroundPaint);
     }
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private class TooltipOutline extends ViewOutlineProvider {
-
         @Override
         public void getOutline(View view, Outline outline) {
             outline.setConvexPath(path);
