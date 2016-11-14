@@ -11,6 +11,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -58,7 +59,7 @@ public class CollectionDetailFragment extends Fragment implements CollectionDeta
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_collection_detail, container, false);
 
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
+        final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
         tooltipOverlay = (TooltipOverlay) view.findViewById(R.id.overlay);
 
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 8);
@@ -70,6 +71,24 @@ public class CollectionDetailFragment extends Fragment implements CollectionDeta
             public void onElementClicked(int elementNumber,
                                          @NonNull FormulaElementView elementView) {
                 tooltipOverlay.displayTooltip(elementView, String.valueOf(elementNumber));
+            }
+        });
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                tooltipOverlay.translateOverlay(dx, dy);
+                tooltipOverlay.hideTooltip();
+            }
+        });
+        recyclerView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN
+                        && recyclerView.findChildViewUnder(event.getX(), event.getY()) == null) {
+                    // Touch outside items
+                    tooltipOverlay.hideTooltip();
+                }
+                return false;
             }
         });
 
