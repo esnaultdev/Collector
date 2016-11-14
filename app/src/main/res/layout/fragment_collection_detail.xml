@@ -23,5 +23,7 @@
     <net.aohayou.collector.collectiondetail.view.TooltipOverlay
         android:id="@+id/overlay"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:paddingStart="@dimen/material_content_edge_margin_horizontal"
+        android:paddingEnd="@dimen/material_content_edge_margin_horizontal" />
 </FrameLayout>

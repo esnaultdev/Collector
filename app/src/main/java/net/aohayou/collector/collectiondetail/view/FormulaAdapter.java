@@ -80,7 +80,7 @@ public class FormulaAdapter extends RecyclerView.Adapter<FormulaAdapter.ViewHold
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
-                        listener.onElementClicked(getAdapterPosition(), ViewHolder.this.view);
+                        listener.onElementClicked(getAdapterPosition() + 1, ViewHolder.this.view);
                     }
                 }
             });

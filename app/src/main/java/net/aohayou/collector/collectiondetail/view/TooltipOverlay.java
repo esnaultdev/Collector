@@ -35,18 +35,50 @@ public class TooltipOverlay extends RelativeLayout {
         tooltip = (ElementTooltip) inflater.inflate(R.layout.formula_element_tooltip, this, false);
         addView(tooltip);
         tooltip.setVisibility(INVISIBLE);
-        tooltip.setDirection(ElementTooltip.Direction.TOP_LEFT);
     }
 
     public void displayTooltip(@NonNull View view, @NonNull String text) {
-        tooltip.setRight(view.getLeft() + tooltip.getWidth());
-        tooltip.setBottom(view.getTop() + tooltip.getHeight());
-        tooltip.setLeft(view.getLeft());
-        tooltip.setTop(view.getTop());
+
+        int tooltipWidth = tooltip.getMeasuredWidth();
+        int tooltipHeight = tooltip.getMeasuredHeight();
+
+        //Default is top left corner
+        boolean left = true;
+        boolean top = true;
+        int leftPos = view.getLeft();
+        int topPos = view.getTop();
+        int revealCircleX = 0;
+        int revealCircleY = 0;
+
+        if (view.getLeft() + tooltipWidth >= getRight() - getPaddingRight()) {
+            left = false;
+            leftPos = view.getRight() - tooltipWidth;
+            revealCircleX = tooltipWidth;
+        }
+        if (view.getTop() + tooltipHeight >= getBottom() - getPaddingBottom()) {
+            top = false;
+            topPos = view.getBottom() - tooltipHeight;
+            revealCircleY = tooltipHeight;
+        }
+
+        if (left && top) {
+            tooltip.setDirection(ElementTooltip.Direction.TOP_LEFT);
+        } else if (left){
+            tooltip.setDirection(ElementTooltip.Direction.BOTTOM_LEFT);
+        } else if (top) {
+            tooltip.setDirection(ElementTooltip.Direction.TOP_RIGHT);
+        } else {
+            tooltip.setDirection(ElementTooltip.Direction.BOTTOM_RIGHT);
+        }
+
+        tooltip.setLeft(leftPos);
+        tooltip.setTop(topPos);
+        tooltip.setRight(leftPos + tooltipWidth);
+        tooltip.setBottom(topPos + tooltipHeight);
 
         float finalRadius = (float) Math.hypot(tooltip.getWidth(), tooltip.getHeight());
-        Animator anim =
-                ViewAnimationUtils.createCircularReveal(tooltip, 0, 0, 0, finalRadius);
+        Animator anim = ViewAnimationUtils.createCircularReveal(
+                tooltip, revealCircleX, revealCircleY, 0, finalRadius);
         tooltip.setVisibility(VISIBLE);
         anim.setDuration(500).start();
 
