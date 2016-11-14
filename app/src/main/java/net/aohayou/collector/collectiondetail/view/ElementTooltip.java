@@ -9,12 +9,14 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.os.Build;
+import android.support.annotation.ColorInt;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewOutlineProvider;
 
 import net.aohayou.collector.R;
+import net.aohayou.collector.util.ColorUtil;
 
 public class ElementTooltip extends View {
 
@@ -82,8 +84,8 @@ public class ElementTooltip extends View {
 
     private void initPaint() {
         backgroundPaint = new Paint();
-        backgroundPaint.setColor(getResources().getColor(
-                material.values.R.color.material_color_green_primary));
+        int color = ColorUtil.getColor(getContext(), R.color.acquired_element_focus);
+        backgroundPaint.setColor(color);
         backgroundPaint.setStyle(Paint.Style.FILL);
         backgroundPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
     }
@@ -125,6 +127,14 @@ public class ElementTooltip extends View {
         this.direction = direction;
         initPath();
         invalidate();
+    }
+
+    public int getColor() {
+        return backgroundPaint.getColor();
+    }
+
+    public void setColor(@ColorInt int color) {
+        backgroundPaint.setColor(color);
     }
 
     @Override

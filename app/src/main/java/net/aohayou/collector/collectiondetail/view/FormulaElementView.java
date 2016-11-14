@@ -4,9 +4,13 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Build;
+import android.support.annotation.ColorRes;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.view.View;
+
+import net.aohayou.collector.R;
+import net.aohayou.collector.util.ColorUtil;
 
 
 public class FormulaElementView extends View {
@@ -37,14 +41,14 @@ public class FormulaElementView extends View {
 
     private void init() {
         if (acquiredPaint == null) {
-            int colorResource = material.values.R.color.material_color_green_primary;
+            @ColorRes int colorRes = R.color.acquired_element;
             acquiredPaint = new Paint();
-            acquiredPaint.setColor(getContext().getResources().getColor(colorResource));
+            acquiredPaint.setColor(ColorUtil.getColor(getContext(), colorRes));
         }
         if (missingPaint == null) {
-            int colorResource = material.values.R.color.material_color_grey_300;
+            @ColorRes int colorRes = R.color.missing_element;
             missingPaint = new Paint();
-            missingPaint.setColor(getContext().getResources().getColor(colorResource));
+            missingPaint.setColor(ColorUtil.getColor(getContext(), colorRes));
         }
     }
 
@@ -58,5 +62,9 @@ public class FormulaElementView extends View {
     public void setAcquired(boolean acquired) {
         this.acquired = acquired;
         invalidate();
+    }
+
+    public boolean isAcquired() {
+        return acquired;
     }
 }

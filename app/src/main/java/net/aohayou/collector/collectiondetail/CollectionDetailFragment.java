@@ -3,6 +3,8 @@ package net.aohayou.collector.collectiondetail;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
+import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -20,6 +22,7 @@ import net.aohayou.collector.collectiondetail.view.FormulaAdapter;
 import net.aohayou.collector.collectiondetail.view.FormulaElementView;
 import net.aohayou.collector.collectiondetail.view.TooltipOverlay;
 import net.aohayou.collector.data.formula.Formula;
+import net.aohayou.collector.util.ColorUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -70,7 +73,10 @@ public class CollectionDetailFragment extends Fragment implements CollectionDeta
             @Override
             public void onElementClicked(int elementNumber,
                                          @NonNull FormulaElementView elementView) {
-                tooltipOverlay.displayTooltip(elementView, String.valueOf(elementNumber));
+                @ColorRes int colorRes = elementView.isAcquired() ?
+                        R.color.acquired_element_focus : R.color.missing_element_focus;
+                @ColorInt int color = ColorUtil.getColor(getContext(), colorRes);
+                tooltipOverlay.displayTooltip(elementView, String.valueOf(elementNumber), color);
             }
         });
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {

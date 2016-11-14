@@ -3,6 +3,7 @@ package net.aohayou.collector.collectiondetail.view;
 import android.animation.Animator;
 import android.content.Context;
 import android.graphics.Point;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -15,7 +16,7 @@ import net.aohayou.collector.R;
 public class TooltipOverlay extends RelativeLayout {
 
     private ElementTooltip tooltip;
-    private boolean hidding;
+    private boolean hiding;
 
     public TooltipOverlay(Context context) {
         super(context);
@@ -41,8 +42,13 @@ public class TooltipOverlay extends RelativeLayout {
         tooltip.setTranslationZ(-tooltip.getElevation());
     }
 
+    public void displayTooltip(@NonNull View view, @NonNull String text, @ColorInt int color) {
+        displayTooltip(view, text);
+        tooltip.setColor(color);
+    }
+
     public void displayTooltip(@NonNull View view, @NonNull String text) {
-        hidding = false;
+        hiding = false;
 
         int tooltipWidth = tooltip.getMeasuredWidth();
         int tooltipHeight = tooltip.getMeasuredHeight();
@@ -102,34 +108,19 @@ public class TooltipOverlay extends RelativeLayout {
     }
 
     public void hideTooltip() {
-        if (hidding) {
+        if (hiding) {
             return;
         }
-        hidding = true;
+        hiding = true;
         float finalRadius = (float) Math.hypot(tooltip.getWidth(), tooltip.getHeight());
         Point point = getPointerRelativePosition();
         Animator anim = ViewAnimationUtils.createCircularReveal(
                 tooltip, point.x, point.y, finalRadius, 0);
         anim.setDuration(500).start();
-        anim.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
-
+        anim.addListener(new AnimationEndListener() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 tooltip.setVisibility(INVISIBLE);
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
             }
         });
         tooltip.animate().translationZ(-tooltip.getElevation()).setDuration(500).start();
@@ -140,5 +131,22 @@ public class TooltipOverlay extends RelativeLayout {
         tooltip.setRight(tooltip.getRight() - dx);
         tooltip.setTop(tooltip.getTop() - dy);
         tooltip.setBottom(tooltip.getBottom() - dy);
+    }
+
+    private abstract class AnimationEndListener implements Animator.AnimatorListener {
+        @Override
+        public void onAnimationStart(Animator animation) {
+
+        }
+
+        @Override
+        public void onAnimationCancel(Animator animation) {
+
+        }
+
+        @Override
+        public void onAnimationRepeat(Animator animation) {
+
+        }
     }
 }
