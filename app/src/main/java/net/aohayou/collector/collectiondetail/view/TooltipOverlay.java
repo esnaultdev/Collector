@@ -70,6 +70,7 @@ public class TooltipOverlay extends FrameLayout {
         if (color != -1) {
             tooltip.setColor(color);
         }
+        tooltip.setText(text);
         TooltipInfo info = new TooltipInfo(tooltip, target);
         tooltips.add(info);
 

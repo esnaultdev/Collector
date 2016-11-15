@@ -8,10 +8,11 @@ import android.graphics.Outline;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Build;
 import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.view.View;
@@ -34,8 +35,11 @@ public class ElementTooltip extends View {
     private int size;
     private int direction;
     private Path path;
+    private String text;
 
     private Paint backgroundPaint;
+    private Paint textPaint;
+    private Rect textBounds;
 
     public ElementTooltip(Context context) {
         super(context);
@@ -81,15 +85,28 @@ public class ElementTooltip extends View {
     }
 
     private void init() {
-        initPaint();
+        initBackgroundPaint();
+        initTextPaint();
+        textBounds = new Rect();
     }
 
-    private void initPaint() {
+    private void initBackgroundPaint() {
         backgroundPaint = new Paint();
         int color = ColorUtil.getColor(getContext(), R.color.acquired_element_focus);
         backgroundPaint.setColor(color);
         backgroundPaint.setStyle(Paint.Style.FILL);
         backgroundPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
+    }
+
+    private void initTextPaint() {
+        textPaint = new Paint();
+        int color = ColorUtil.getColor(getContext(),
+                R.color.material_typography_primary_text_color_light);
+        textPaint.setColor(color);
+        float dimen = getResources().getDimension(
+                material.values.R.dimen.material_typography_regular_display_1_text_size);
+        textPaint.setTextSize(dimen);
+        textPaint.setTextAlign(Paint.Align.CENTER);
     }
 
     private void initPath() {
@@ -139,6 +156,15 @@ public class ElementTooltip extends View {
         backgroundPaint.setColor(color);
     }
 
+    @Nullable
+    public String getText() {
+        return text;
+    }
+
+    public void setText(@Nullable String text) {
+        this.text = text;
+    }
+
     public Point getPointerRelativePosition() {
         switch (direction) {
             case ElementTooltip.Direction.TOP_LEFT:
@@ -174,6 +200,10 @@ public class ElementTooltip extends View {
         super.onDraw(canvas);
 
         canvas.drawPath(path, backgroundPaint);
+        if (text != null) {
+            textPaint.getTextBounds(text, 0, text.length(), textBounds);
+            canvas.drawText(text, canvas.getWidth()/2, canvas.getHeight()/2 - textBounds.exactCenterY(), textPaint);
+        }
     }
 
     private class TooltipOutline extends ViewOutlineProvider {
