@@ -7,9 +7,11 @@ import android.graphics.Matrix;
 import android.graphics.Outline;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Point;
 import android.graphics.RectF;
 import android.os.Build;
 import android.support.annotation.ColorInt;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.view.View;
@@ -135,6 +137,20 @@ public class ElementTooltip extends View {
 
     public void setColor(@ColorInt int color) {
         backgroundPaint.setColor(color);
+    }
+
+    public Point getPointerRelativePosition() {
+        switch (direction) {
+            case ElementTooltip.Direction.TOP_LEFT:
+            default:
+                return new Point(0, 0);
+            case ElementTooltip.Direction.TOP_RIGHT:
+                return new Point(getMeasuredWidth(), 0);
+            case ElementTooltip.Direction.BOTTOM_RIGHT:
+                return new Point(getMeasuredWidth(), getMeasuredHeight());
+            case ElementTooltip.Direction.BOTTOM_LEFT:
+                return new Point(0, getMeasuredHeight());
+        }
     }
 
     @Override

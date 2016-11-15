@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <net.aohayou.collector.collectiondetail.view.ElementTooltip
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="@dimen/material_baseline_grid_9x"
+    android:layout_height="@dimen/material_baseline_grid_9x"
     android:elevation="@dimen/material_elevation_fab_resting"/>

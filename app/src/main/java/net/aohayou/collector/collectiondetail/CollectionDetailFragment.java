@@ -76,14 +76,14 @@ public class CollectionDetailFragment extends Fragment implements CollectionDeta
                 @ColorRes int colorRes = elementView.isAcquired() ?
                         R.color.acquired_element_focus : R.color.missing_element_focus;
                 @ColorInt int color = ColorUtil.getColor(getContext(), colorRes);
-                tooltipOverlay.displayTooltip(elementView, String.valueOf(elementNumber), color);
+                tooltipOverlay.add(elementView, String.valueOf(elementNumber), color);
             }
         });
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                tooltipOverlay.translateOverlay(dx, dy);
-                tooltipOverlay.hideTooltip();
+                tooltipOverlay.translate(dx, dy);
+                tooltipOverlay.hide();
             }
         });
         recyclerView.setOnTouchListener(new View.OnTouchListener() {
@@ -92,7 +92,7 @@ public class CollectionDetailFragment extends Fragment implements CollectionDeta
                 if (event.getAction() == MotionEvent.ACTION_DOWN
                         && recyclerView.findChildViewUnder(event.getX(), event.getY()) == null) {
                     // Touch outside items
-                    tooltipOverlay.hideTooltip();
+                    tooltipOverlay.hide();
                 }
                 return false;
             }

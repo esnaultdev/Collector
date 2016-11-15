@@ -9,14 +9,16 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
-import android.widget.RelativeLayout;
+import android.widget.FrameLayout;
 
 import net.aohayou.collector.R;
 
-public class TooltipOverlay extends RelativeLayout {
+import java.util.ArrayList;
+import java.util.List;
 
-    private ElementTooltip tooltip;
-    private boolean hiding;
+public class TooltipOverlay extends FrameLayout {
+
+    private List<TooltipInfo> tooltips;
 
     public TooltipOverlay(Context context) {
         super(context);
@@ -33,39 +35,65 @@ public class TooltipOverlay extends RelativeLayout {
         init();
     }
 
-    private void init() {
+    public void init() {
+        tooltips = new ArrayList<>();
+    }
+
+    public void add(@NonNull View target, @NonNull String text) {
+        add(target, text, -1);
+    }
+
+    public void add(@NonNull final View target, @NonNull String text, @ColorInt int color) {
+        // Hide other tooltips
+        hide();
+
+        final ElementTooltip tooltip = createTooltip();
+        if (color != -1) {
+            tooltip.setColor(color);
+        }
+        TooltipInfo info = new TooltipInfo(tooltip);
+        tooltips.add(info);
+
+        tooltip.post(new Runnable() {
+            @Override
+            public void run() {
+                setupTooltipPosition(tooltip, target);
+                animateAdd(tooltip);
+            }
+        });
+    }
+
+    @NonNull
+    private ElementTooltip createTooltip() {
         LayoutInflater inflater = LayoutInflater.from(getContext());
-        tooltip = (ElementTooltip) inflater.inflate(R.layout.formula_element_tooltip, this, false);
+        ElementTooltip tooltip =
+                (ElementTooltip) inflater.inflate(R.layout.formula_element_tooltip, this, false);
         addView(tooltip);
 
+        // Setup starting attributes
         tooltip.setVisibility(INVISIBLE);
         tooltip.setTranslationZ(-tooltip.getElevation());
+
+        return tooltip;
     }
 
-    public void displayTooltip(@NonNull View view, @NonNull String text, @ColorInt int color) {
-        displayTooltip(view, text);
-        tooltip.setColor(color);
-    }
-
-    public void displayTooltip(@NonNull View view, @NonNull String text) {
-        hiding = false;
-
+    private void setupTooltipPosition(@NonNull ElementTooltip tooltip, @NonNull View target) {
         int tooltipWidth = tooltip.getMeasuredWidth();
         int tooltipHeight = tooltip.getMeasuredHeight();
 
-        //Default direction is top left corner
+        // Default direction is top left corner
         boolean left = true;
         boolean top = true;
-        int leftPos = view.getLeft();
-        int topPos = view.getTop();
+        int leftPos = target.getLeft();
+        int topPos = target.getTop();
 
-        if (view.getLeft() + tooltipWidth >= getRight() - getPaddingRight()) {
+        if (target.getLeft() + tooltipWidth >= getRight() - getPaddingRight()) {
             left = false;
-            leftPos = view.getRight() - tooltipWidth;
+            leftPos = target.getRight() - tooltipWidth;
         }
-        if (view.getTop() + tooltipHeight >= getBottom() - getPaddingBottom()) {
+        if (target.getTop() + tooltipHeight >= getBottom() - getPaddingBottom()) {
             top = false;
-            topPos = view.getBottom() - tooltipHeight;
+            topPos = target.getBottom() - tooltipHeight;
         }
 
         if (left && top) {
@@ -82,56 +110,95 @@ public class TooltipOverlay extends RelativeLayout {
         tooltip.setTop(topPos);
         tooltip.setRight(leftPos + tooltipWidth);
         tooltip.setBottom(topPos + tooltipHeight);
+    }
 
+    private void animateAdd(@NonNull ElementTooltip tooltip) {
         float finalRadius = (float) Math.hypot(tooltip.getWidth(), tooltip.getHeight());
-        Point point = getPointerRelativePosition();
-        Animator anim = ViewAnimationUtils.createCircularReveal(
-                tooltip, point.x, point.y, 0, finalRadius);
+        Point c = tooltip.getPointerRelativePosition();
+        Animator anim = ViewAnimationUtils.createCircularReveal(tooltip, c.x, c.y, 0, finalRadius);
         tooltip.setVisibility(VISIBLE);
         anim.setDuration(500).start();
 
         tooltip.animate().translationZ(0).setDuration(500).start();
     }
 
-    public Point getPointerRelativePosition() {
-        switch (tooltip.getDirection()) {
-            case ElementTooltip.Direction.TOP_LEFT:
-            default:
-                return new Point(0, 0);
-            case ElementTooltip.Direction.TOP_RIGHT:
-                return new Point(tooltip.getMeasuredWidth(), 0);
-            case ElementTooltip.Direction.BOTTOM_RIGHT:
-                return new Point(tooltip.getMeasuredWidth(), tooltip.getMeasuredHeight());
-            case ElementTooltip.Direction.BOTTOM_LEFT:
-                return new Point(0, tooltip.getMeasuredHeight());
+    public void hide() {
+        for (TooltipInfo tooltipInfo : tooltips) {
+            hide(tooltipInfo);
         }
     }
 
-    public void hideTooltip() {
-        if (hiding) {
+    private void hide(@NonNull TooltipInfo tooltipInfo) {
+        if (tooltipInfo.isHiding()) {
             return;
         }
-        hiding = true;
+        tooltipInfo.setHiding(true);
+
+        animateHide(tooltipInfo);
+    }
+
+    private void animateHide(@NonNull final TooltipInfo tooltipInfo) {
+        ElementTooltip tooltip = tooltipInfo.tooltip;
+
+        // Circular reveal
         float finalRadius = (float) Math.hypot(tooltip.getWidth(), tooltip.getHeight());
-        Point point = getPointerRelativePosition();
-        Animator anim = ViewAnimationUtils.createCircularReveal(
-                tooltip, point.x, point.y, finalRadius, 0);
+        Point c = tooltip.getPointerRelativePosition();
+        Animator anim = ViewAnimationUtils.createCircularReveal(tooltip, c.x, c.y, finalRadius, 0);
         anim.setDuration(500).start();
         anim.addListener(new AnimationEndListener() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                tooltip.setVisibility(INVISIBLE);
+                remove(tooltipInfo);
             }
         });
+
+        // Animate elevation
         tooltip.animate().translationZ(-tooltip.getElevation()).setDuration(500).start();
     }
 
-    public void translateOverlay(int dx, int dy) {
+    private void remove(@NonNull TooltipInfo tooltipInfo) {
+        tooltipInfo.tooltip.setVisibility(INVISIBLE);
+        tooltips.remove(tooltipInfo);
+        removeView(tooltipInfo.tooltip);
+    }
+
+    public void translate(int dx, int dy) {
+        for (TooltipInfo tooltipInfo : tooltips) {
+            translateTooltip(tooltipInfo.tooltip, dx, dy);
+        }
+    }
+
+    private static void translateTooltip(@NonNull ElementTooltip tooltip, int dx, int dy) {
         tooltip.setLeft(tooltip.getLeft() - dx);
         tooltip.setRight(tooltip.getRight() - dx);
         tooltip.setTop(tooltip.getTop() - dy);
         tooltip.setBottom(tooltip.getBottom() - dy);
     }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        // Do nothing as tooltips are positioned manually
+    }
+
+
+    private static class TooltipInfo {
+        private ElementTooltip tooltip;
+        private boolean hiding;
+
+        public TooltipInfo(@NonNull ElementTooltip tooltip) {
+            this.tooltip = tooltip;
+            hiding = false;
+        }
+
+        public void setHiding(boolean hiding) {
+            this.hiding = hiding;
+        }
+
+        public boolean isHiding() {
+            return hiding;
+        }
+    }
+
 
     private abstract class AnimationEndListener implements Animator.AnimatorListener {
         @Override
