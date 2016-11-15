@@ -76,7 +76,7 @@ public class CollectionDetailFragment extends Fragment implements CollectionDeta
                 @ColorRes int colorRes = elementView.isAcquired() ?
                         R.color.acquired_element_focus : R.color.missing_element_focus;
                 @ColorInt int color = ColorUtil.getColor(getContext(), colorRes);
-                tooltipOverlay.add(elementView, String.valueOf(elementNumber), color);
+                tooltipOverlay.toggleTooltip(elementView, String.valueOf(elementNumber), color);
             }
         });
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
