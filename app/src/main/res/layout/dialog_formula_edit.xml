@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -7,37 +7,30 @@
     android:paddingStart="@dimen/material_dialog_content_area_padding_horizontal"
     android:paddingEnd="@dimen/material_dialog_content_area_padding_horizontal">
 
-    <!-- Center vertical in a relative layout with padding isn't working properly -->
-    <RelativeLayout
+    <android.support.design.widget.TextInputLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/formula_string_input_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@+id/help_icon">
 
-        <android.support.design.widget.TextInputLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/formula_string_input_layout"
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/formula_string_input_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toStartOf="@+id/help_icon">
+            android:hint="@string/formula_string_hint"
+            android:imeOptions="actionDone" />
 
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/formula_string_input_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/formula_string_hint"
-                android:imeOptions="actionDone" />
+    </android.support.design.widget.TextInputLayout>
 
-        </android.support.design.widget.TextInputLayout>
+    <ImageView
+        android:id="@+id/help_icon"
+        android:layout_width="@dimen/material_icon_size_system"
+        android:layout_height="@dimen/material_icon_size_system"
+        android:src="@mipmap/ic_help_black_24dp"
+        android:tint="@color/colorAccent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="@dimen/material_baseline_grid_1.5x"/>
 
-        <ImageView
-            android:id="@+id/help_icon"
-            android:layout_width="@dimen/material_icon_size_system"
-            android:layout_height="@dimen/material_icon_size_system"
-            android:src="@mipmap/ic_help_black_24dp"
-            android:tint="@color/colorAccent"
-            android:layout_centerVertical="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="@dimen/material_baseline_grid_1x"/>
-
-    </RelativeLayout>
-</LinearLayout>
+</RelativeLayout>
