@@ -2,16 +2,20 @@ package net.aohayou.collector.collectiondetail;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.aohayou.collector.R;
+import net.aohayou.collector.help.HelpActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,6 +37,7 @@ public class EditFormulaDialogFragment extends DialogFragment {
     private int oldSelection = -1;
 
     @BindView(R.id.formula_string_input_text) TextInputEditText editText;
+    @BindView(R.id.help_icon) ImageView helpIcon;
 
 
     public void setDialogListener(Listener listener) {
@@ -112,6 +117,14 @@ public class EditFormulaDialogFragment extends DialogFragment {
                 return handled;
             }
         });
+
+        helpIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO Should go back to the presenter
+                displayHelp();
+            }
+        });
     }
 
     @Override
@@ -125,5 +138,11 @@ public class EditFormulaDialogFragment extends DialogFragment {
     public void onCancel(DialogInterface dialog) {
         listener.onCancel();
         super.onCancel(dialog);
+    }
+
+    private void displayHelp() {
+        Intent intent = new Intent(
+                EditFormulaDialogFragment.this.getActivity(), HelpActivity.class);
+        startActivity(intent);
     }
 }

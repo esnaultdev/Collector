@@ -20,4 +20,9 @@
 
     <string name="formula_string_hint">Formula</string>
 
+    <string name="help_formula_explanation">A collection is composed of numbered elements. A formula is used to populate a collection.</string>
+    <string name="help_formula_simple">\"1\" is the formula for only the first element.</string>
+    <string name="help_formula_range">\"1*10\" is the range from 1 to 10.</string>
+    <string name="help_formula_addition">\"1*5+10\" is the range from 1 to 5 plus the 10th element.</string>
+    <string name="help_formula_subtraction">\"1*5-3\" is the range from 1 to 5 minus the 3rd element.</string>
 </resources>

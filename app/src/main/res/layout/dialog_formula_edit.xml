@@ -1,18 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.TextInputLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/formula_string_input_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingTop="@dimen/material_dialog_content_area_title_content_margin"
     android:paddingStart="@dimen/material_dialog_content_area_padding_horizontal"
-    android:paddingEnd="@dimen/material_dialog_content_area_padding_horizontal" >
+    android:paddingEnd="@dimen/material_dialog_content_area_padding_horizontal">
 
-    <android.support.design.widget.TextInputEditText
-        android:id="@+id/formula_string_input_text"
+    <!-- Center vertical in a relative layout with padding isn't working properly -->
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/formula_string_hint"
-        android:imeOptions="actionDone" />
+        android:layout_height="wrap_content">
 
-</android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/formula_string_input_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/help_icon">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/formula_string_input_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/formula_string_hint"
+                android:imeOptions="actionDone" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <ImageView
+            android:id="@+id/help_icon"
+            android:layout_width="@dimen/material_icon_size_system"
+            android:layout_height="@dimen/material_icon_size_system"
+            android:src="@mipmap/ic_help_black_24dp"
+            android:tint="@color/colorAccent"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="@dimen/material_baseline_grid_1x"/>
+
+    </RelativeLayout>
+</LinearLayout>

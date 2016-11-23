@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_help"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/material_baseline_grid_2x"
+    android:paddingLeft="@dimen/material_content_edge_margin_horizontal"
+    android:paddingRight="@dimen/material_content_edge_margin_horizontal"
+    android:paddingTop="@dimen/material_baseline_grid_2x"
+    tools:context="net.aohayou.collector.help.HelpActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/help_formula_explanation" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/help_formula_simple"
+        android:layout_marginTop="@dimen/material_baseline_grid_1x"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/help_formula_range"
+        android:layout_marginTop="@dimen/material_baseline_grid_1x"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/help_formula_addition"
+        android:layout_marginTop="@dimen/material_baseline_grid_1x"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/help_formula_subtraction"
+        android:layout_marginTop="@dimen/material_baseline_grid_1x"/>
+</LinearLayout>

@@ -21,7 +21,8 @@
         <activity
             android:name=".collectiondetail.CollectionDetailActivity"
             android:label="@string/title_activity_collection_detail"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".help.HelpActivity"></activity>
     </application>
 
 </manifest>
