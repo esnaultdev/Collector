@@ -63,9 +63,16 @@ public class CollectionDetailPresenter implements CollectionDetailContract.Prese
     @Override
     public void onFormulaEdit(@NonNull String newFormulaString) {
         Formula formula = new Formula(newFormulaString, new Date().getTime());
-        collection = collection.setFormula(formula);
-        dataSource.saveCollection(collection);
-        view.displayFormula(formula);
+        if (formula.isValid()) {
+            collection = collection.setFormula(formula);
+            dataSource.saveCollection(collection);
+            view.displayFormula(formula);
+        } else {
+            String error = formula.getError();
+            if (error != null) {
+                view.displayFormulaError(error);
+            }
+        }
     }
 
     @Override

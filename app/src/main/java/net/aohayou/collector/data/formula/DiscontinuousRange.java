@@ -69,7 +69,8 @@ public class DiscontinuousRange {
     }
 
     public int getLastElement() {
-        return ranges.lastEntry().getValue();
+        Map.Entry<Integer, Integer> lastEntry = ranges.lastEntry();
+        return lastEntry != null ? lastEntry.getValue() : 0;
     }
 
     public int size() {

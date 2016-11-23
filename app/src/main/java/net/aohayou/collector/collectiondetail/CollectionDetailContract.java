@@ -14,6 +14,8 @@ public interface CollectionDetailContract {
         void displayCollectionName(@NonNull String collectionName);
 
         void showEditFormulaDialog(@NonNull String oldFormulaString);
+
+        void displayFormulaError(@NonNull String error);
     }
 
     interface Presenter extends BasePresenter {

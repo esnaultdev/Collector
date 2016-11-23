@@ -1,12 +1,12 @@
 package net.aohayou.collector.collectiondetail;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.GridLayoutManager;
@@ -156,6 +156,11 @@ public class CollectionDetailFragment extends Fragment implements CollectionDeta
         editFormulaDialog = EditFormulaDialogFragment.getInstance(oldFormulaString);
         editFormulaDialog.setDialogListener(getCreationDialogListener());
         editFormulaDialog.show(getActivity().getSupportFragmentManager(), TAG_EDIT_FORMULA);
+    }
+
+    @Override
+    public void displayFormulaError(@NonNull String error) {
+        Snackbar.make(getView(), error, Snackbar.LENGTH_LONG).show();
     }
 
     private EditFormulaDialogFragment.Listener getCreationDialogListener() {

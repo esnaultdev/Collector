@@ -1,6 +1,7 @@
 package net.aohayou.collector.data.formula;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.common.base.Preconditions;
@@ -16,6 +17,8 @@ public class Formula {
     private final long creationDate;
 
     private DiscontinuousRange elements;
+    private boolean valid;
+    private String error;
 
     public Formula(@NonNull String formulaString, int elementCount, long creationDate) {
         this.formulaString = Preconditions.checkNotNull(formulaString);
@@ -66,10 +69,18 @@ public class Formula {
     private void convertFormula() {
         try {
             elements = FormulaConverter.convert(formulaString);
+            valid = true;
         } catch (InvalidFormulaException e) {
-            Log.e("Formula", "Error converting formula: ", e);
-            elements = new DiscontinuousRange();
+            handleInvalidFormula(e);
+        } catch (RuntimeException e) {
+            handleInvalidFormula(e);
         }
+    }
+
+    private void handleInvalidFormula(Exception e) {
+        elements = new DiscontinuousRange();
+        valid = false;
+        error = e.getMessage();
     }
 
     public String getFormulaString() {
@@ -86,6 +97,14 @@ public class Formula {
                 .setCreationDate(creationDate)
                 .setElementCount(getElementCount())
                 .build();
+    }
+
+    public boolean isValid() {
+        return valid;
+    }
+
+    public @Nullable String getError() {
+        return error;
     }
 
     /**

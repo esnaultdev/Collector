@@ -6,7 +6,7 @@ public class Range {
 
     public Range(int first, int last) {
         if (first > last) {
-            throw new RuntimeException("Invalid range: first must be lower than or equal to last");
+            throw new RuntimeException("Invalid range: " + first + "*" + last);
         }
         this.first = first;
         this.last = last;
