@@ -81,6 +81,7 @@ public class CollectionDetailFragment extends Fragment implements CollectionDeta
             }
         });
 
+        // Update the tooltip overlay on element clicks
         formulaAdapter.setListener(new FormulaAdapter.Listener() {
             @Override
             public void onElementClicked(int elementNumber,
@@ -91,6 +92,8 @@ public class CollectionDetailFragment extends Fragment implements CollectionDeta
                 tooltipOverlay.toggleTooltip(elementView, String.valueOf(elementNumber), color);
             }
         });
+
+        // Update the tooltip overlay and hide tooltips on scroll
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -98,12 +101,13 @@ public class CollectionDetailFragment extends Fragment implements CollectionDeta
                 tooltipOverlay.hide();
             }
         });
+
+        // Hide the tooltips on a click outside the elements
         recyclerView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN
                         && recyclerView.findChildViewUnder(event.getX(), event.getY()) == null) {
-                    // Touch outside items
                     tooltipOverlay.hide();
                 }
                 return false;
@@ -170,11 +174,6 @@ public class CollectionDetailFragment extends Fragment implements CollectionDeta
         editFormulaDialog.show(getActivity().getSupportFragmentManager(), TAG_EDIT_FORMULA);
     }
 
-    @Override
-    public void displayFormulaError(@NonNull String error) {
-        Snackbar.make(getView(), error, Snackbar.LENGTH_LONG).show();
-    }
-
     private EditFormulaDialogFragment.Listener getCreationDialogListener() {
         return new EditFormulaDialogFragment.Listener() {
             @Override
@@ -190,11 +189,14 @@ public class CollectionDetailFragment extends Fragment implements CollectionDeta
     }
 
     @Override
+    public void displayFormulaError(@NonNull String error) {
+        Snackbar.make(getView(), error, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
     public boolean isActive() {
         return isAdded();
     }
-
-
 
     /**
      * @return the biggest possible column count for elements fitting the fragment view.

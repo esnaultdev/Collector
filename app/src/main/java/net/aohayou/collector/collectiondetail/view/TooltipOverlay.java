@@ -17,8 +17,12 @@ import net.aohayou.collector.R;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * ViewGroup containing tooltips displayed on top of a list of {@link FormulaElementView}.
+ */
 public class TooltipOverlay extends FrameLayout {
 
+    /** The list of tooltips being displayed */
     private List<TooltipInfo> tooltips;
 
     public TooltipOverlay(Context context) {
@@ -40,10 +44,21 @@ public class TooltipOverlay extends FrameLayout {
         tooltips = new ArrayList<>();
     }
 
+    /**
+     * Add a tooltip for the target or remove it if it was already displayed.
+     * @param target the target view.
+     * @param text the text of the tooltip.
+     */
     public void toggleTooltip(@NonNull View target, @NonNull String text) {
         toggleTooltip(target, text, -1);
     }
 
+    /**
+     * Add a tooltip for the target or remove it if it was already displayed.
+     * @param target the target view.
+     * @param text the text of the tooltip.
+     * @param color the color of the tooltip.
+     */
     public void toggleTooltip(@NonNull View target, @NonNull String text,
                               @ColorInt int color) {
         if (hasActiveTooltip(target)) {
@@ -53,6 +68,10 @@ public class TooltipOverlay extends FrameLayout {
         }
     }
 
+    /**
+     * @return true if a view has a tooltip being displayed, false otherwise.
+     * @param target the target view.
+     */
     private boolean hasActiveTooltip(@NonNull View target) {
         for (TooltipInfo tooltipInfo : tooltips) {
             if (tooltipInfo.getTarget() == target) {
@@ -62,6 +81,12 @@ public class TooltipOverlay extends FrameLayout {
         return false;
     }
 
+    /**
+     * Create and add the tooltip.
+     * @param target the target view.
+     * @param text the text of the tooltip.
+     * @param color the color of the tooltip.
+     */
     private void add(@NonNull View target, @NonNull String text, @ColorInt int color) {
         // Hide other tooltips
         hide();
@@ -79,6 +104,10 @@ public class TooltipOverlay extends FrameLayout {
         animateAdd(tooltip);
     }
 
+    /**
+     * Create a tooltip.
+     * @return the created tooltip.
+     */
     @NonNull
     private ElementTooltip createTooltip() {
         LayoutInflater inflater = LayoutInflater.from(getContext());
@@ -99,6 +128,11 @@ public class TooltipOverlay extends FrameLayout {
         tooltip.measure(widthMeasureSpec, heightMeasureSpec);
     }
 
+    /**
+     * Align the tooltip with its target.
+     * @param tooltip the tooltip to align.
+     * @param target the target view.
+     */
     private void setupTooltipPosition(@NonNull ElementTooltip tooltip, @NonNull View target) {
         int tooltipWidth = tooltip.getMeasuredWidth();
         int tooltipHeight = tooltip.getMeasuredHeight();
@@ -134,6 +168,10 @@ public class TooltipOverlay extends FrameLayout {
         tooltip.setBottom(topPos + tooltipHeight);
     }
 
+    /**
+     * Display the tooltip using a circular reveal and animate its elevation.
+     * @param tooltip the tooltip to animate.
+     */
     private void animateAdd(@NonNull ElementTooltip tooltip) {
         float finalRadius = (float) Math.hypot(tooltip.getWidth(), tooltip.getHeight());
         Point c = tooltip.getPointerRelativePosition();
@@ -144,12 +182,19 @@ public class TooltipOverlay extends FrameLayout {
         tooltip.animate().translationZ(0).setDuration(500).start();
     }
 
+    /**
+     * Hide all tooltips of the overlay.
+     */
     public void hide() {
         for (TooltipInfo tooltipInfo : tooltips) {
             hide(tooltipInfo);
         }
     }
 
+    /**
+     * Hide a tooltip from the overlay.
+     * @param tooltipInfo the tooltip to hide.
+     */
     private void hide(@NonNull TooltipInfo tooltipInfo) {
         if (tooltipInfo.isHiding()) {
             return;
@@ -159,6 +204,10 @@ public class TooltipOverlay extends FrameLayout {
         animateHide(tooltipInfo);
     }
 
+    /**
+     * Hide the tooltip using a circular reveal and animate its elevation.
+     * @param tooltipInfo the tooltip to animate.
+     */
     private void animateHide(@NonNull final TooltipInfo tooltipInfo) {
         ElementTooltip tooltip = tooltipInfo.tooltip;
 
@@ -178,18 +227,33 @@ public class TooltipOverlay extends FrameLayout {
         tooltip.animate().translationZ(-tooltip.getElevation()).setDuration(500).start();
     }
 
+    /**
+     * Remove a tooltip from the overlay.
+     * @param tooltipInfo the tooltip to remove.
+     */
     private void remove(@NonNull TooltipInfo tooltipInfo) {
         tooltipInfo.tooltip.setVisibility(INVISIBLE);
         tooltips.remove(tooltipInfo);
         removeView(tooltipInfo.tooltip);
     }
 
+    /**
+     * Translate all tooltips of the overlay.
+     * @param dx the horizontal translation.
+     * @param dy the vertical translation.
+     */
     public void translate(int dx, int dy) {
         for (TooltipInfo tooltipInfo : tooltips) {
             translateTooltip(tooltipInfo.tooltip, dx, dy);
         }
     }
 
+    /**
+     * Translate a tooltip.
+     * @param tooltip the tooltip to translate.
+     * @param dx the horizontal translation.
+     * @param dy the vertical translation.
+     */
     private static void translateTooltip(@NonNull ElementTooltip tooltip, int dx, int dy) {
         tooltip.setLeft(tooltip.getLeft() - dx);
         tooltip.setRight(tooltip.getRight() - dx);
@@ -203,6 +267,9 @@ public class TooltipOverlay extends FrameLayout {
     }
 
 
+    /**
+     * Wrapper class around an {@link ElementTooltip} to provide additional information.
+     */
     private static class TooltipInfo {
         private ElementTooltip tooltip;
         private boolean hiding;
@@ -228,26 +295,20 @@ public class TooltipOverlay extends FrameLayout {
         }
     }
 
-
+    /**
+     * Default implementation of {@link Animator.AnimatorListener} for brevity.
+     */
     private class DefaultAnimatorListener implements Animator.AnimatorListener {
         @Override
-        public void onAnimationStart(Animator animation) {
-
-        }
+        public void onAnimationStart(Animator animation) { }
 
         @Override
-        public void onAnimationEnd(Animator animation) {
-
-        }
+        public void onAnimationEnd(Animator animation) { }
 
         @Override
-        public void onAnimationCancel(Animator animation) {
-
-        }
+        public void onAnimationCancel(Animator animation) { }
 
         @Override
-        public void onAnimationRepeat(Animator animation) {
-
-        }
+        public void onAnimationRepeat(Animator animation) { }
     }
 }
