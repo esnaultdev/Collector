@@ -30,9 +30,11 @@ import butterknife.ButterKnife;
 public class CollectionDetailFragment extends Fragment implements CollectionDetailContract.View {
 
     private static final String TAG_EDIT_FORMULA = "editFormula";
+    private static final int[] COLUMN_COUNTS = {5, 8, 10, 12, 15, 20, 25, 30};
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     private FormulaAdapter formulaAdapter;
+    private GridLayoutManager layoutManager;
     private TooltipOverlay tooltipOverlay;
 
     private CollectionDetailContract.Presenter presenter;
@@ -60,14 +62,24 @@ public class CollectionDetailFragment extends Fragment implements CollectionDeta
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_collection_detail, container, false);
-
+        final View view = inflater.inflate(R.layout.fragment_collection_detail, container, false);
         final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
         tooltipOverlay = (TooltipOverlay) view.findViewById(R.id.overlay);
 
-        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 8);
+        layoutManager = new GridLayoutManager(getContext(), COLUMN_COUNTS[0]);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(formulaAdapter);
+
+        // Update the column count when the view has been measured
+        view.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom,
+                                       int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                int columnCount = getColumnCountMax(right - left);
+                layoutManager.setSpanCount(columnCount);
+                view.removeOnLayoutChangeListener(this);
+            }
+        });
 
         formulaAdapter.setListener(new FormulaAdapter.Listener() {
             @Override
@@ -180,5 +192,28 @@ public class CollectionDetailFragment extends Fragment implements CollectionDeta
     @Override
     public boolean isActive() {
         return isAdded();
+    }
+
+
+
+    /**
+     * @return the biggest possible column count for elements fitting the fragment view.
+     * @param maxWidth the width available to element views.
+     */
+    private int getColumnCountMax(int maxWidth) {
+        Resources res = getContext().getResources();
+        int elementWidth = (int) res.getDimension(R.dimen.formula_element_view_size);
+        int elementMargin = (int) res.getDimension(R.dimen.formula_element_view_margin);
+        int elementTotalWidth = elementWidth + 2*elementMargin;
+
+        // We iterate from the biggest count towards the smallest until the views can fit
+        for (int i = COLUMN_COUNTS.length - 1; i >= 0; i--) {
+            if (COLUMN_COUNTS[i]*elementTotalWidth <= maxWidth) {
+                return COLUMN_COUNTS[i];
+            }
+        }
+
+        // If all column counts are too big, we return the smallest
+        return COLUMN_COUNTS[0];
     }
 }

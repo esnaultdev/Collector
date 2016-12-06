@@ -2,7 +2,7 @@
 <net.aohayou.collector.collectiondetail.view.FormulaElementView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="@dimen/material_baseline_grid_4x"
-    android:layout_height="@dimen/material_baseline_grid_4x"
-    android:layout_margin="@dimen/material_baseline_grid_0.5x"
+    android:layout_width="@dimen/formula_element_view_size"
+    android:layout_height="@dimen/formula_element_view_size"
+    android:layout_margin="@dimen/formula_element_view_margin"
     tools:background="@color/material_color_green_primary" />
