@@ -2,8 +2,6 @@ package net.aohayou.collector.collectiondetail;
 
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -13,16 +11,12 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
 import net.aohayou.collector.R;
 import net.aohayou.collector.collectiondetail.view.FormulaAdapter;
-import net.aohayou.collector.collectiondetail.view.FormulaElementView;
-import net.aohayou.collector.collectiondetail.view.TooltipOverlay;
 import net.aohayou.collector.data.formula.Formula;
-import net.aohayou.collector.util.ColorUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,7 +29,6 @@ public class CollectionDetailFragment extends Fragment implements CollectionDeta
     @BindView(R.id.toolbar) Toolbar toolbar;
     private FormulaAdapter formulaAdapter;
     private GridLayoutManager layoutManager;
-    private TooltipOverlay tooltipOverlay;
 
     private CollectionDetailContract.Presenter presenter;
 
@@ -62,59 +55,27 @@ public class CollectionDetailFragment extends Fragment implements CollectionDeta
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.fragment_collection_detail, container, false);
-        final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
-        tooltipOverlay = (TooltipOverlay) view.findViewById(R.id.overlay);
+        final RecyclerView recyclerView = (RecyclerView)
+                inflater.inflate(R.layout.fragment_collection_detail, container, false);
 
         layoutManager = new GridLayoutManager(getContext(), COLUMN_COUNTS[0]);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(formulaAdapter);
 
         // Update the column count when the view has been measured
-        view.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+        recyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View v, int left, int top, int right, int bottom,
                                        int oldLeft, int oldTop, int oldRight, int oldBottom) {
                 int columnCount = getColumnCountMax(right - left);
                 layoutManager.setSpanCount(columnCount);
-                view.removeOnLayoutChangeListener(this);
+                recyclerView.removeOnLayoutChangeListener(this);
             }
         });
 
-        // Update the tooltip overlay on element clicks
-        formulaAdapter.setListener(new FormulaAdapter.Listener() {
-            @Override
-            public void onElementClicked(int elementNumber,
-                                         @NonNull FormulaElementView elementView) {
-                @ColorRes int colorRes = elementView.isAcquired() ?
-                        R.color.acquired_element_focus : R.color.missing_element_focus;
-                @ColorInt int color = ColorUtil.getColor(getContext(), colorRes);
-                tooltipOverlay.toggleTooltip(elementView, String.valueOf(elementNumber), color);
-            }
-        });
+        //TODO Update the formula on element clicks
 
-        // Update the tooltip overlay and hide tooltips on scroll
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                tooltipOverlay.translate(dx, dy);
-                tooltipOverlay.hide();
-            }
-        });
-
-        // Hide the tooltips on a click outside the elements
-        recyclerView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN
-                        && recyclerView.findChildViewUnder(event.getX(), event.getY()) == null) {
-                    tooltipOverlay.hide();
-                }
-                return false;
-            }
-        });
-
-        return view;
+        return recyclerView;
     }
 
     @Override

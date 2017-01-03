@@ -6,11 +6,11 @@ import android.graphics.Paint;
 import android.os.Build;
 import android.support.annotation.ColorRes;
 import android.support.annotation.RequiresApi;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
 
 import net.aohayou.collector.R;
-import net.aohayou.collector.util.ColorUtil;
 
 
 public class FormulaElementView extends View {
@@ -43,12 +43,12 @@ public class FormulaElementView extends View {
         if (acquiredPaint == null) {
             @ColorRes int colorRes = R.color.acquired_element;
             acquiredPaint = new Paint();
-            acquiredPaint.setColor(ColorUtil.getColor(getContext(), colorRes));
+            acquiredPaint.setColor(ContextCompat.getColor(getContext(), colorRes));
         }
         if (missingPaint == null) {
             @ColorRes int colorRes = R.color.missing_element;
             missingPaint = new Paint();
-            missingPaint.setColor(ColorUtil.getColor(getContext(), colorRes));
+            missingPaint.setColor(ContextCompat.getColor(getContext(), colorRes));
         }
     }
 
