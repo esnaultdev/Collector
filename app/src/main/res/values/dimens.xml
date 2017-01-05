@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="formula_element_view_size">@dimen/material_baseline_grid_4x</dimen>
+    <dimen name="formula_element_view_size">@dimen/material_baseline_grid_6x</dimen>
     <dimen name="formula_element_view_margin">@dimen/material_baseline_grid_0.5x</dimen>
+
+    <dimen name="formula_element_text_size">@dimen/material_typography_regular_subheading_text_size</dimen>
 </resources>

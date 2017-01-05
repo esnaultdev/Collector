@@ -52,9 +52,10 @@ public class FormulaAdapter extends RecyclerView.Adapter<FormulaAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        boolean acquired = formula.hasElement(position + 1);
-
+        int elementNumber = position + 1;
+        boolean acquired = formula.hasElement(elementNumber);
         holder.view.setAcquired(acquired);
+        holder.view.setNumber(elementNumber);
     }
 
     @Override

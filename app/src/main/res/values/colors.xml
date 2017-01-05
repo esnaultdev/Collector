@@ -4,9 +4,7 @@
     <color name="colorPrimaryDark">@color/material_color_amber_primary_dark</color>
     <color name="colorAccent">@color/material_color_red_accent</color>
 
-    <color name="acquired_element">@color/material_color_green_400</color>
-    <color name="missing_element">@color/material_color_grey_300</color>
-
-    <color name="acquired_element_focus">@color/material_color_green_500</color>
-    <color name="missing_element_focus">@color/material_color_grey_400</color>
+    <color name="acquired_element">@color/material_color_green_500</color>
+    <color name="missing_element">@color/material_color_grey_400</color>
+    <color name="element_text_color">@color/material_color_white</color>
 </resources>

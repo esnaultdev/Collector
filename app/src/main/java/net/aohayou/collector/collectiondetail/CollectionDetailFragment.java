@@ -24,7 +24,6 @@ import butterknife.ButterKnife;
 public class CollectionDetailFragment extends Fragment implements CollectionDetailContract.View {
 
     private static final String TAG_EDIT_FORMULA = "editFormula";
-    private static final int[] COLUMN_COUNTS = {5, 8, 10, 12, 15, 20, 25, 30};
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     private FormulaAdapter formulaAdapter;
@@ -58,7 +57,7 @@ public class CollectionDetailFragment extends Fragment implements CollectionDeta
         final RecyclerView recyclerView = (RecyclerView)
                 inflater.inflate(R.layout.fragment_collection_detail, container, false);
 
-        layoutManager = new GridLayoutManager(getContext(), COLUMN_COUNTS[0]);
+        layoutManager = new GridLayoutManager(getContext(), 1);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(formulaAdapter);
 
@@ -168,15 +167,6 @@ public class CollectionDetailFragment extends Fragment implements CollectionDeta
         int elementWidth = (int) res.getDimension(R.dimen.formula_element_view_size);
         int elementMargin = (int) res.getDimension(R.dimen.formula_element_view_margin);
         int elementTotalWidth = elementWidth + 2*elementMargin;
-
-        // We iterate from the biggest count towards the smallest until the views can fit
-        for (int i = COLUMN_COUNTS.length - 1; i >= 0; i--) {
-            if (COLUMN_COUNTS[i]*elementTotalWidth <= maxWidth) {
-                return COLUMN_COUNTS[i];
-            }
-        }
-
-        // If all column counts are too big, we return the smallest
-        return COLUMN_COUNTS[0];
+        return maxWidth/elementTotalWidth;
     }
 }
